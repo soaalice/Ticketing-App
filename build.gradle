@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'com.itu16'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+        name 'local-repo'
+    }
+}
+
+ext {
+    junitVersion = '5.11.0-M2'
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    compileOnly('jakarta.servlet:jakarta.servlet-api:6.1.0')
+    implementation('org.hibernate:hibernate-core:7.0.0.Alpha3')
+    implementation('org.glassfish.jaxb:jaxb-runtime:4.0.5')
+    implementation('org.postgresql:postgresql:42.7.2')
+
+    implementation files('libs/Sprint.jar')
+
+    // Lombok dependencies for compile-time code generation
+    compileOnly('org.projectlombok:lombok:1.18.30')
+    annotationProcessor('org.projectlombok:lombok:1.18.30')
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    // Add winter-framework dependency with group identifier
+    implementation(group: 'com.itu16', name: 'ticketing', version: '1.0-SNAPSHOT')
+}
+
+test {
+    useJUnitPlatform()
+}
