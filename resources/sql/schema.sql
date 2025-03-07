@@ -14,6 +14,13 @@ CREATE TABLE ville (
     name VARCHAR(150) NOT NULL UNIQUE
 );
 
+CREATE TABLE admin(
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    user_name VARCHAR(100) NOT NULL UNIQUE,
+    pwd VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE utilisateur(
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
@@ -43,7 +50,7 @@ CREATE TABLE siege_avion(
 CREATE TABLE prix_siege_avion(
     id SERIAL PRIMARY KEY,
     siege_avion_id INT NOT NULL REFERENCES siege_avion(id),
-    prix DECIMAL(10,2) NOT NULL
+    prix NUMERIC(10,2) NOT NULL DEFAULT 0
 );
 
 CREATE TABLE vol(
@@ -51,8 +58,8 @@ CREATE TABLE vol(
     avion_id INT NOT NULL REFERENCES avion(id),
     date_depart TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_arrivee TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ville_depart INT NOT NULL REFERENCES ville(id),
-    ville_arrivee INT NOT NULL REFERENCES ville(id),
+    ville_depart_id INT NOT NULL REFERENCES ville(id),
+    ville_arrivee_id INT NOT NULL REFERENCES ville(id),
 );
 
 CREATE TABLE reservation(
@@ -60,6 +67,7 @@ CREATE TABLE reservation(
     utilisateur_id INT NOT NULL REFERENCES utilisateur(id),
     vol_id INT NOT NULL REFERENCES vol(id),
     montant_total NUMERIC NOT NULL DEFAULT 0,
+    prix_siege_avion_id NUMERIC NOT NULL DEFAULT 0,
     date_reservation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

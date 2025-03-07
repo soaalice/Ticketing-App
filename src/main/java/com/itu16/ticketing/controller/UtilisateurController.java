@@ -13,11 +13,13 @@ import mg.annotation.verbs.Get;
 @AnnotationController
 public class UtilisateurController {
 
+    private final UtilisateurService utilisateurService = UtilisateurService.getInstance();
+
     @Get
     @RestApi
     @Url("utilisateurs")
     public List<Utilisateur> listerUtilisateurs() {
-        return UtilisateurService.getInstance().findAll();
+        return utilisateurService.findAll();
     }
     
 }
