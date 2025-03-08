@@ -110,7 +110,7 @@
         </div>
       </c:if>
 
-      <form action="${pageContext.request.contextPath}/login" method="post">
+      <form action="${pageContext.request.contextPath}/loginA" method="post">
         <div class="textbox">
           <input type="text" placeholder="Nom d'utilisateur" name="log.userName" required>
         </div>

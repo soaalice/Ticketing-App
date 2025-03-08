@@ -1,6 +1,6 @@
 package com.itu16.ticketing.service;
 
-import java.util.List;
+// import java.util.List;
 
 import com.itu16.ticketing.dto.LoginCredentials;
 import com.itu16.ticketing.model.Utilisateur;
@@ -25,20 +25,11 @@ public class UtilisateurService extends CRUDService<Utilisateur, Integer> {
     public Utilisateur findByUserNameAndPwd(LoginCredentials credentials) {
         try (EntityManager em = emf.createEntityManager();) {
             return em.createQuery(
-                            "SELECT c FROM Utilisateur c WHERE c.user_name = :user_name AND c.pwd = :pwd", Utilisateur.class)
+                            "SELECT u FROM Utilisateur u WHERE u.userName = :user_name AND u.pwd = :pwd", Utilisateur.class)
                     .setParameter("user_name", credentials.getUserName())
                     .setParameter("pwd", credentials.getPassword())
                     .getSingleResult();
         } catch (NoResultException ignored) {
-            return null;
-        }
-    }
-
-    public List<Utilisateur> findAll() {
-        try (EntityManager em = emf.createEntityManager();) {
-            return em.createQuery("SELECT c FROM Utilisateur c", Utilisateur.class).getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
