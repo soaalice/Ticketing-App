@@ -12,26 +12,20 @@ import mg.annotation.verbs.Get;
 
 @AnnotationController
 public class TestController {
-
-    private final AvionService avionService = AvionService.getInstance();
-    private final UtilisateurService utilisateurService = UtilisateurService.getInstance();
-    private final ModeleService modeleService = ModeleService.getInstance();
-    private final VilleService villeService = VilleService.getInstance();
-    private final ModeleTypeSiegeService modeleTypeSiegeService = ModeleTypeSiegeService.getInstance();
-    private final VolService volService = VolService.getInstance();
+    // private final VolService volService = VolService.getInstance();
     
-    @Get
-    @RestApi
-    @Url("test")
-    public List<Vol> test() {
-        return volService.findAll();
-    }
+    // @Get
+    // @RestApi
+    // @Url("test")
+    // public List<Vol> test() {
+    //     return volService.findAll();
+    // }
 
-    @Get
-    @RestApi
-    @Url("villes")
-    public List<Ville> villes() {
-        return villeService.findAll();
-    }
+    // @Get
+    // @RestApi
+    // @Url("villes")
+    // public List<Ville> villes() {
+    //     return villeService.findAll();
+    // }
 
 }

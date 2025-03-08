@@ -32,7 +32,7 @@
                 }
             %>
 
-            <form class="search-form" id="searchForm">
+            <form class="search-form" id="searchForm" action="${pageContext.request.contextPath}/vols" method="GET">
                 <div class="form-group">
                     <label for="from">Départ :</label>
                     <input type="text" id="from" placeholder="Ville de départ" list="from-cities" required>
@@ -59,7 +59,7 @@
 
         async function fetchCities() {
             const contextPath = '<%= request.getContextPath() %>';
-            const response = await fetch(contextPath + '/villes');
+            const response = await fetch(contextPath + '/api/villes');
             cities = await response.json();
         }
 
