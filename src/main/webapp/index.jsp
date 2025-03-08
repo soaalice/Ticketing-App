@@ -21,8 +21,7 @@
             <p>Des destinations partout dans le monde, pour tous les budgets.</p>
 
             <%
-                Object userLoggedIn = session.getAttribute("authentified");
-                if (userLoggedIn != null && (Boolean) userLoggedIn) {
+                if (isLogged) {
             %>
                     <p>Bienvenue, vous êtes connecté !</p>
             <%

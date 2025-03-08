@@ -12,6 +12,7 @@ import mg.annotation.AnnotationController;
 import mg.annotation.Param;
 // import mg.annotation.RestApi;
 import mg.annotation.Url;
+import mg.annotation.authentification.Authentified;
 import mg.annotation.verbs.Get;
 import mg.annotation.verbs.Post;
 
@@ -40,6 +41,19 @@ public class UtilisateurController {
     public ModelView loginA() {
         ModelView mv = new ModelView();
         mv.setUrl("loginA.jsp");
+        return mv;
+    }
+
+    @Get
+    @Url("logout")
+    @Authentified
+    public ModelView logout(CustomSession customSession){
+        customSession.remove("authentified");
+        customSession.remove("role");
+        customSession.remove("idUtilisateur");
+        customSession.remove("idAdmin");
+        ModelView mv = new ModelView();
+        mv.setUrl("index.jsp");
         return mv;
     }
 
