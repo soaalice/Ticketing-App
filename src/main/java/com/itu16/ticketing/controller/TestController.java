@@ -18,12 +18,20 @@ public class TestController {
     private final ModeleService modeleService = ModeleService.getInstance();
     private final VilleService villeService = VilleService.getInstance();
     private final ModeleTypeSiegeService modeleTypeSiegeService = ModeleTypeSiegeService.getInstance();
+    private final VolService volService = VolService.getInstance();
     
     @Get
     @RestApi
     @Url("test")
-    public List<ModeleTypeSiege> test() {
-        System.out.println("test controller");
-        return modeleTypeSiegeService.findAll();
+    public List<Vol> test() {
+        return volService.findAll();
     }
+
+    @Get
+    @RestApi
+    @Url("villes")
+    public List<Ville> villes() {
+        return villeService.findAll();
+    }
+
 }
