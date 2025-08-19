@@ -17,6 +17,11 @@
             <property name="jakarta.persistence.jdbc.password" value="sql"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+            <!-- Afficher les requêtes SQL dans la console -->
+            <property name="hibernate.show_sql" value="true"/>
+            <!-- Formater les requêtes SQL pour une meilleure lisibilité -->
+            <property name="hibernate.format_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
