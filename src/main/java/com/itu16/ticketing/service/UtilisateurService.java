@@ -22,10 +22,10 @@ public class UtilisateurService extends CRUDService<Utilisateur, Integer> {
         return utilisateurService;
     }
 
-    public Utilisateur findByUserNameAndPwd(LoginCredentials credentials) {
+    public <T> T findByUserNameAndPwd(LoginCredentials credentials, Class<T> type) {
         try (EntityManager em = emf.createEntityManager();) {
             return em.createQuery(
-                            "SELECT u FROM Utilisateur u WHERE u.userName = :user_name AND u.pwd = :pwd", Utilisateur.class)
+                            "SELECT u FROM " + type.getSimpleName() + " u WHERE u.userName = :user_name AND u.pwd = :pwd", type)
                     .setParameter("user_name", credentials.getUserName())
                     .setParameter("pwd", credentials.getPassword())
                     .getSingleResult();

@@ -101,7 +101,7 @@
 <body>
   <div class="login-container">
     <div class="login-box">
-      <h2>Connexion</h2>
+      <h2>Connexion Admin</h2>
 
       <!-- Affichage du message d'erreur si l'utilisateur n'est pas trouvé -->
       <c:if test="${not empty msg}">

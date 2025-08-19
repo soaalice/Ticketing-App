@@ -3,6 +3,7 @@ package com.itu16.ticketing.controller;
 import java.util.List;
 
 import com.itu16.ticketing.dto.LoginCredentials;
+import com.itu16.ticketing.model.Admin;
 import com.itu16.ticketing.model.Utilisateur;
 import com.itu16.ticketing.service.UtilisateurService;
 
@@ -37,14 +38,6 @@ public class UtilisateurController {
     }
 
     @Get
-    @Url("loginA")
-    public ModelView loginA() {
-        ModelView mv = new ModelView();
-        mv.setUrl("loginA.jsp");
-        return mv;
-    }
-
-    @Get
     @Url("logout")
     @Authentified
     public ModelView logout(CustomSession customSession){
@@ -60,7 +53,7 @@ public class UtilisateurController {
     @Post
     @Url("login")
     public ModelView login(@Param(name = "log")LoginCredentials credentials, CustomSession customSession) {
-        Utilisateur utilisateur = utilisateurService.findByUserNameAndPwd(credentials);
+        Utilisateur utilisateur = utilisateurService.findByUserNameAndPwd(credentials, Utilisateur.class);
         if (utilisateur != null) {
             customSession.set("authentified", true);
             customSession.set("role", "user");
@@ -75,10 +68,18 @@ public class UtilisateurController {
         return mv;
     }
 
+    @Get
+    @Url("loginA")
+    public ModelView loginA() {
+        ModelView mv = new ModelView();
+        mv.setUrl("loginA.jsp");
+        return mv;
+    }
+
     @Post
     @Url("loginA")
     public ModelView loginA(@Param(name = "log")LoginCredentials credentials, CustomSession customSession) {
-        Utilisateur utilisateur = utilisateurService.findByUserNameAndPwd(credentials);
+        Admin utilisateur = (Admin) utilisateurService.findByUserNameAndPwd(credentials, Admin.class);
         if (utilisateur != null) {
             customSession.set("authentified", true);
             customSession.set("role", "admin");
@@ -89,7 +90,7 @@ public class UtilisateurController {
         }
         ModelView mv = new ModelView();
         mv.addObject("msg", "Utilisateur non trouvé");
-        mv.setUrl("login.jsp");
+        mv.setUrl("loginA.jsp");
         return mv;
     }
 
