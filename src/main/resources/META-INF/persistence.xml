@@ -22,6 +22,14 @@
             <property name="hibernate.show_sql" value="true"/>
             <!-- Formater les requêtes SQL pour une meilleure lisibilité -->
             <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Pool Hikari -->
+            <property name="hibernate.hikari.maximumPoolSize" value="10"/>
+            <property name="hibernate.hikari.idleTimeout" value="60000"/>
+            <property name="hibernate.hikari.maxLifetime" value="1800000"/>
+            <property name="hibernate.hikari.connectionTimeout" value="30000"/>
+
+
         </properties>
     </persistence-unit>
 </persistence>
