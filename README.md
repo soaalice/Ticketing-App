@@ -17,3 +17,14 @@ Ticketing-App est une application web conçue pour gérer la réservation de vol
 2. Recherchez des vols en utilisant les filtres disponibles.
 3. Sélectionnez un vol et suivez les instructions pour réserver votre billet.
 4. Gérez vos réservations via votre compte utilisateur.
+
+## Lancement du projet
+
+Exécuter la commande:
+
+```bash
+./gradlew build
+```
+
+Puis déplacer le fichier .war dans l'apache.
+
