@@ -22,4 +22,10 @@ public class Avion {
     @ManyToOne
     @JoinColumn(name = "modele_id", nullable = false)
     private Modele modele;
+
+
+    @Override
+    public String toString() {
+        return "A"+id + "-" + modele.toString() + "-" + dateFabrication;
+    }
 }
