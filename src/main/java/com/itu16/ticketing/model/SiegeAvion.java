@@ -1,5 +1,7 @@
 package com.itu16.ticketing.model;
 
+import com.itu16.ticketing.dto.Status;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,4 +28,6 @@ public class SiegeAvion {
     private TypeSiege typeSiege;
 
     private Double prix;
+
+    private Status status;
 }

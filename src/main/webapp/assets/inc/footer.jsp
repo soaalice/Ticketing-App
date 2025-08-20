@@ -11,7 +11,9 @@
                     <ul class="list-unstyled">
                         <li><a href="${pageContext.request.contextPath}" class="text-light text-decoration-none">Accueil</a></li>
                         <li><a href="${pageContext.request.contextPath}/vols" class="text-light text-decoration-none">Vols</a></li>
-                        <li><a href="#" class="text-light text-decoration-none">Contact</a></li>
+                        <li><a href="${pageContext.request.contextPath}/promotions" class="text-light text-decoration-none">Promotions</a></li>
+                        <li><a href="${pageContext.request.contextPath}/reservations" class="text-light text-decoration-none">Réservations</a></li>
+                        <!-- <li><a href="#" class="text-light text-decoration-none">Contact</a></li> -->
                     </ul>
                 </div>
                 <div class="col-md-4">

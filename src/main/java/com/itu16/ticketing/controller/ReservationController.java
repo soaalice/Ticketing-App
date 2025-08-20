@@ -81,6 +81,7 @@ public class ReservationController {
         for (SiegeAvion siege : sieges) {
             PrixTypeSiegeVol prix = prixTypeSiegeVolService.findByTypeSiegeVol(siege.getTypeSiege(), vol);
             siege.setPrix(prix.getPrix());
+            siegeAvionService.updateStatus(siege);
         }
         modelView.addObject("sieges", sieges);
         return modelView;

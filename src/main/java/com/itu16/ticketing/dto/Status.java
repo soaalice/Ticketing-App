@@ -1,8 +1,14 @@
 package com.itu16.ticketing.dto;
 
 public enum Status {
+    FREE("Libre"),
+    TAKEN("Réservé"),
+    ACTIVE("Active"),
+    INACTIVE("Inactive"),
+    SUSPENDED("Suspendue"),
     CONFIRMED("Confirmée"),
-    CANCELLED("Annulée");
+    CANCELLED("Annulée"),
+    PENDING("En attente");
 
     private final String label;
 

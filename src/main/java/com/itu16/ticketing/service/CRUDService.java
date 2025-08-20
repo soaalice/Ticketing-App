@@ -62,4 +62,24 @@ public abstract class CRUDService<T, M> {
         em.close();
     }
 
+    public <R> R getSingleValue(String sql, Class<R> resultClass, Object... params) {
+        EntityManager em = emf.createEntityManager();
+        R result = null;
+        try {
+            var query = em.createNativeQuery(sql);
+            for (int i = 0; i < params.length; i++) {
+                query.setParameter(i + 1, params[i]); // JDBC uses 1-based index
+            }
+            Object singleResult = query.getSingleResult();
+            if (singleResult != null) {
+                result = resultClass.cast(singleResult);
+            }
+        } catch (jakarta.persistence.NoResultException e) {
+            // Aucun résultat : on retourne null
+            result = null;
+        } finally {
+            em.close();
+        }
+        return result;
+    }
 }

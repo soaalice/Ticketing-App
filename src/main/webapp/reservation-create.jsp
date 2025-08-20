@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.itu16.ticketing.model.Vol" %>
 <%@ page import="com.itu16.ticketing.model.SiegeAvion" %>
+<%@ page import="com.itu16.ticketing.dto.Status" %>
 
 <% Vol vol=(Vol) request.getAttribute("vol"); List<SiegeAvion> sieges = (List<SiegeAvion>)
 request.getAttribute("sieges");
@@ -23,14 +24,20 @@ request.getAttribute("sieges");
             transition: all 0.2s ease;
             cursor: pointer;
         }
-
         .siege-card:hover {
             transform: translateY(-3px);
         }
-
-        .siege-checkbox:checked+.siege-card {
+        .siege-checkbox:checked + .siege-card {
             border-color: #0d6efd !important;
             background-color: rgba(13, 110, 253, 0.1);
+        }
+        .siege-card.taken {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
+        .siege-card.taken:hover {
+            transform: none;
         }
     </style>
 </head>
@@ -80,33 +87,40 @@ request.getAttribute("sieges");
 
                                 <h5 class="mb-4">Sélectionnez vos sièges :</h5>
                                 <div class="row g-4">
-                                    <% if (sieges !=null) { for (int i=0; i < sieges.size();
-                                        i++) { SiegeAvion siege=sieges.get(i); %>
+                                    <% if (sieges != null) { 
+                                        for (int i = 0; i < sieges.size(); i++) { 
+                                            SiegeAvion siege = sieges.get(i); 
+                                            boolean isTaken = siege.getStatus() == Status.TAKEN;
+                                    %>
                                         <div class="col-6 col-md-4 col-lg-3">
                                             <input type="checkbox"
                                                 value="<%= siege.getId() %>"
                                                 data-price="<%= siege.getPrix() %>"
                                                 class="siege-checkbox d-none"
-                                                id="siege<%= siege.getId() %>">
+                                                id="siege<%= siege.getId() %>"
+                                                <%= isTaken ? "disabled" : "" %>>
                                             <label for="siege<%= siege.getId() %>"
-                                                class="siege-card card border h-100 mb-0">
+                                                class="siege-card card border h-100 mb-0 <%= isTaken ? "taken" : "" %>">
                                                 <div class="card-body text-center">
                                                     <div class="mb-2">
-                                                        <span class="h4">
-                                                            <%= siege.getId() %>
-                                                        </span>
+                                                        <span class="h4"><%= siege.getId() %></span>
                                                     </div>
                                                     <div class="text-muted small">
                                                         <%= siege.getTypeSiege().getName() %>
+                                                        <% if (isTaken) { %>
+                                                            <br><span class="badge bg-danger">Occupé</span>
+                                                        <% } %>
                                                     </div>
                                                     <div class="mt-2 text-primary fw-bold">
-                                                        <%= String.format("%,.2f",
-                                                            siege.getPrix()) %> Ar
+                                                        <%= String.format("%,.2f", siege.getPrix()) %> Ar
                                                     </div>
                                                 </div>
                                             </label>
                                         </div>
-                                        <% } } %>
+                                    <% 
+                                        }
+                                    } 
+                                    %>
                                 </div>
 
                                 <div class="total-section mt-4 p-3 bg-light rounded">

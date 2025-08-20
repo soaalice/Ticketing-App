@@ -55,3 +55,25 @@ BEGIN
     RETURN total_sieges - sieges_reserves;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION est_siege_libre_vol_actif(siege_id INT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    libre BOOLEAN;
+BEGIN
+    SELECT NOT EXISTS (
+        SELECT 1
+        FROM reservation_details rd
+        JOIN reservation r ON r.id = rd.reservation_id
+        JOIN vol v ON v.id = r.vol_id
+        JOIN siege_avion sa ON sa.id = rd.siege_avion_id
+        WHERE
+            sa.id = siege_id
+            AND CAST(v.date_depart AS TIMESTAMP) > NOW()
+    ) INTO libre;
+
+    RETURN libre;
+END;
+$$ LANGUAGE plpgsql;
+
+select est_siege_libre_vol_actif(5);
