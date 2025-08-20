@@ -16,5 +16,4 @@ public class PromotionVolService extends CRUDService<PromotionVol, Long>{
         }
         return promotionVolService;
     }
-
 }

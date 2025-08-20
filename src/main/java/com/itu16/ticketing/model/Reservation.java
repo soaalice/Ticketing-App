@@ -16,24 +16,25 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Avion {
+public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "date_fabrication", nullable = false)
-    private String dateFabrication;
+    @ManyToOne
+    @JoinColumn(name = "utilisateur_id", nullable=false)
+    private Utilisateur utilisateur;
 
     @ManyToOne
-    @JoinColumn(name = "modele_id", nullable = false)
-    private Modele modele;
+    @JoinColumn(name = "vol_id", nullable=false)
+    private Vol vol;
 
+    @Column(name = "montant_total", nullable=false)
+    private Double montantTotal;
 
-    @Override
-    public String toString() {
-        return "A"+id + "-" + modele.toString() + "-" + dateFabrication;
-    }
+    @Column(name = "date_reservation", nullable=false)
+    private String dateReservation;
 
-    @OneToMany(mappedBy = "avion", fetch=FetchType.EAGER)
-    private List<SiegeAvion> sieges = new ArrayList<>();
+    @OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
+    private List<ReservationDetails> reservationDetails = new ArrayList<>();
 }

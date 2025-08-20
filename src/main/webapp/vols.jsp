@@ -54,10 +54,18 @@
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="${pageContext.request.contextPath}/vols/details?id=<%= vol.getId() %>" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-info-circle me-1"></i>Détails
-                                </a>
+                                <div class="btn-group">
+                                    <a href="${pageContext.request.contextPath}/vols/details?id=<%= vol.getId() %>" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-info-circle me-1"></i>Détails
+                                    </a>
+                                    <% if (isLogged && !isAdmin) { %>
+                                        <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>" 
+                                           class="btn btn-success btn-sm ms-2">
+                                            <i class="fas fa-ticket me-1"></i>Réserver
+                                        </a>
+                                    <% } %>
+                                </div>
                                 <% if (isAdmin) { %>
                                     <div class="btn-group">
                                         <a href="${pageContext.request.contextPath}/vols/edit?id=<%= vol.getId() %>" 

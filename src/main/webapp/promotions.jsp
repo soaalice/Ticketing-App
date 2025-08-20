@@ -82,16 +82,6 @@
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-info-circle me-1"></i>Détails du vol
                                 </a>
-                                <% if (isAdmin) { %>
-                                    <form action="${pageContext.request.contextPath}/promotions/delete" 
-                                          method="post" class="d-inline">
-                                        <input type="hidden" name="id" value="<%= promotion.getId() %>">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette promotion ?')">
-                                            <i class="fas fa-trash me-1"></i>Supprimer
-                                        </button>
-                                    </form>
-                                <% } %>
                             </div>
                         </div>
                     </div>
