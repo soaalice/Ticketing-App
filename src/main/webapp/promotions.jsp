@@ -24,11 +24,11 @@
         .reduction-badge {
             position: absolute;
             top: -10px;
-            right: -10px;
+            right: -15px;
             padding: 1rem;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             z-index: 1;
         }
     </style>

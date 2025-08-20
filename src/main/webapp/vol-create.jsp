@@ -24,7 +24,7 @@
                         <h1 class="h3 mb-0">Créer un nouveau Vol</h1>
                     </div>
                     <div class="card-body p-4">
-                        <form action="${pageContext.request.contextPath}/vols" method="post" class="needs-validation" novalidate>
+                        <form action="${pageContext.request.contextPath}/vols/create" method="post" class="needs-validation" novalidate>
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-floating">

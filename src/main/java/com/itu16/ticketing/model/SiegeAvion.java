@@ -3,12 +3,15 @@ package com.itu16.ticketing.model;
 import com.itu16.ticketing.dto.Status;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
@@ -27,7 +30,13 @@ public class SiegeAvion {
     @JoinColumn(name = "type_siege_id", nullable=false)
     private TypeSiege typeSiege;
 
-    private Double prix;
+    @Transient
+    private Double prix = 0.0;
 
-    private Status status;
+    @Transient
+    private Status status = Status.FREE;
+
+    public String getNumero() {
+        return avion.getId() + "-" + typeSiege.getName() + "-" + id;
+    }
 }

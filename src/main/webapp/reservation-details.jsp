@@ -2,9 +2,11 @@
 <%@ page import="com.itu16.ticketing.model.Reservation" %>
 <%@ page import="com.itu16.ticketing.model.ReservationDetails" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.itu16.ticketing.dto.Status" %>
 
 <%
     Reservation reservation = (Reservation) request.getAttribute("reservation");
+    reservation.setMontantApresAnnulation();
 %>
 
 <!DOCTYPE html>
@@ -40,6 +42,28 @@
             background: rgba(13, 110, 253, 0.1);
             color: #0d6efd;
         }
+        .detail-card.cancelled {
+            opacity: 0.75;
+            border: 1px solid #dee2e6 !important;
+        }
+        .detail-card.cancelled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        .seat-badge.cancelled {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        .cancelled-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-radius: 0 0.5rem 0 0.5rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -55,7 +79,13 @@
                                 <h1 class="h3 mb-1">Réservation #<%= reservation.getId() %></h1>
                                 <p class="text-muted mb-0">Réservée le <%= reservation.getDateReservation() %></p>
                             </div>
-                            <span class="badge bg-success">Confirmée</span>
+                            <div class="status-badge">
+                                <% if(reservation.getStatus() != Status.CANCELLED) { %>
+                                    <span class="badge bg-success">Confirmée</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Annulée</span>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
 
@@ -81,46 +111,92 @@
 
                         <!-- Détails des sièges -->
                         <h4 class="mb-4">Sièges réservés</h4>
-                        
-                        <% List<ReservationDetails> details = reservation.getReservationDetails();
-                            if (details == null || details.isEmpty()) {
-                            %>
-                            <p>Aucun siège réservé.</p>
-                            <% } else { %>
-                                <div class="row g-4 mb-4">
-                                    <% for(ReservationDetails detail : details) { %>
-                                        <div class="col-md-6">
-                                            <div class="detail-card card border-0 shadow-sm">
-                                                <div class="card-body">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="seat-badge me-3">
-                                                            <%= detail.getSiegeAvion().getId() %>
+                        <div class="row g-4 mb-4">
+                            <% List<ReservationDetails> details = reservation.getReservationDetails();
+                                if (details == null || details.isEmpty()) {
+                                %>
+                                <p>Aucun siège réservé.</p>
+                                <% } else { %>
+                                    <div class="row g-4 mb-4">
+                                        <% for(ReservationDetails detail : details) { 
+                                            boolean isCancelled = detail.getStatus() == Status.CANCELLED;
+                                        %>
+                                            <div class="col-md-6">
+                                                <div class="detail-card card border-0 shadow-sm position-relative <%= isCancelled ? "cancelled" : "" %>">
+                                                    <% if (isCancelled) { %>
+                                                        <div class="cancelled-label">
+                                                            <i class="fas fa-ban me-1"></i>Annulé
                                                         </div>
-                                                        <div>
-                                                            <h6 class="mb-1">
-                                                                <%= detail.getSiegeAvion().getTypeSiege().getName() %>
-                                                            </h6>
-                                                            <p class="text-muted">
-                                                                Prix: <%= String.format("%,.2f", detail.getMontant()) %> Ar
-                                                            </p>
+                                                    <% } %>
+                                                    <div class="card-body">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="seat-badge me-3 <%= isCancelled ? "cancelled" : "" %>">
+                                                                <%= detail.getSiegeAvion().getId() %>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="mb-1">
+                                                                    <%= detail.getSiegeAvion().getTypeSiege().getName() %>
+                                                                </h6>
+                                                                <p class="text-muted mb-0">
+                                                                    Prix: <%= String.format("%,.2f", detail.getMontant()) %> Ar
+                                                                </p>
+                                                            </div>
+                                                            <% if(!isAdmin && !isCancelled && reservation.getStatus() != Status.CANCELLED) { %>
+                                                                <div class="ms-3">
+                                                                    <button type="button" 
+                                                                            class="btn btn-outline-danger btn-sm"
+                                                                            onclick="if(confirm('Êtes-vous sûr de vouloir annuler ce siège ?')) {
+                                                                                document.getElementById('cancelSeat<%= detail.getId() %>').submit();
+                                                                            }">
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
+                                                                    <form id="cancelSeat<%= detail.getId() %>" 
+                                                                          action="${pageContext.request.contextPath}/reservations/details/cancel" 
+                                                                          method="post" class="d-none">
+                                                                        <input type="hidden" name="id" value="<%= detail.getId() %>">
+                                                                        <input type="hidden" name="reservationId" value="<%= reservation.getId() %>">
+                                                                    </form>
+                                                                </div>
+                                                            <% } %>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         <% } %>
-                                </div>
+                                    </div>
                                 <% } %>
+                        </div>
 
 
                         <!-- Informations de paiement -->
                         <div class="card bg-light border-0">
                             <div class="card-body">
                                 <h4 class="mb-4">Détails du paiement</h4>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Montant total</span>
-                                    <strong><%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar</strong>
-                                </div>
+                                <% if (reservation.getMontantApresAnnulation() != reservation.getMontantTotal()) { %>
+                                    <div class="d-flex justify-content-between mb-2 text-muted">
+                                        <span>Montant initial</span>
+                                        <span>
+                                            <%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Montant annulé</span>
+                                        <span class="text-danger">
+                                            - <%= String.format("%,.2f", reservation.getMontantTotal() - reservation.getMontantApresAnnulation()) %> Ar
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                                        <span>Montant total</span>
+                                        <strong class="text-primary">
+                                            <%= String.format("%,.2f", reservation.getMontantApresAnnulation()) %> Ar
+                                        </strong>
+                                    </div>
+                                <% } else { %>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Montant total</span>
+                                        <strong><%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar</strong>
+                                    </div>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -131,11 +207,11 @@
                                class="btn btn-light">
                                 <i class="fas fa-arrow-left me-2"></i>Retour
                             </a>
+                                <% if(isAdmin) { %>
                             <div class="btn-group">
                                 <!-- <a href="#" class="btn btn-outline-primary">
                                     <i class="fas fa-download me-2"></i>Télécharger la facture
                                 </a> -->
-                                <% if(isAdmin) { %>
                                     <button type="button" class="btn btn-outline-danger" 
                                             onclick="if(confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
                                                 document.getElementById('cancelForm').submit();
@@ -146,8 +222,8 @@
                                           method="post" class="d-none">
                                         <input type="hidden" name="id" value="<%= reservation.getId() %>">
                                     </form>
-                                <% } %>
                             </div>
+                                <% } %>
                         </div>
                     </div>
                 </div>

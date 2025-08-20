@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.itu16.ticketing.dto.Status;
 import com.itu16.ticketing.model.Vol;
 import com.itu16.ticketing.utils.DateConverter;
 
@@ -63,6 +64,13 @@ public class VolService extends CRUDService<Vol, Long> {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private void updateVolStatus(Vol vol) {
+        Integer nSiegeLibre = getSingleValue("SELECT get_nombre_sieges_libres(?)", Integer.class, (int) (long) vol.getId());
+        if (nSiegeLibre != null && nSiegeLibre == 0) {
+            vol.setStatus(Status.FULL);
         }
     }
 

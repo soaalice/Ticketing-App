@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.itu16.ticketing.dto.Status;
 import com.itu16.ticketing.model.PrixTypeSiegeVol;
 import com.itu16.ticketing.model.Reservation;
 import com.itu16.ticketing.model.ReservationDetails;
 import com.itu16.ticketing.model.SiegeAvion;
 import com.itu16.ticketing.model.Utilisateur;
 import com.itu16.ticketing.model.Vol;
+
+import jakarta.transaction.Transactional;
 
 public class ReservationService extends CRUDService<Reservation, Long> {
 
@@ -29,6 +32,26 @@ public class ReservationService extends CRUDService<Reservation, Long> {
         return reservationService;
     }
 
+    @Override
+    public Reservation findById(Long id) {
+        Reservation reservation = super.findById(id);
+        
+        int cancelledDetails = 0;
+        if (reservation != null) {
+            for (ReservationDetails details : reservation.getReservationDetails()) {
+                if (details.getStatus() == Status.CANCELLED) {
+                    cancelledDetails++;
+                }
+            }
+            if (cancelledDetails == reservation.getReservationDetails().size()) {
+                reservation.setStatus(Status.CANCELLED);
+                update(reservation);
+            }
+        }
+        return reservation;
+    }
+
+    @Transactional
     public Reservation generateReservation(Vol vol, Utilisateur utilisateur, Map<String, String> request) {
         System.out.println("Génération de la réservation...");
         System.out.println("REQUETES MAP : " + request);

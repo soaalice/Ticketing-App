@@ -93,3 +93,17 @@ CREATE TABLE param (
     name VARCHAR(100) NOT NULL UNIQUE,
     value VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE annulation_reservation(
+    id SERIAL PRIMARY KEY,
+    reservation_id INT NOT NULL REFERENCES reservation(id),
+    date_annulation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    description VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE annulation_reservation_details(
+    id SERIAL PRIMARY KEY,
+    reservation_details_id INT NOT NULL REFERENCES reservation_details(id),
+    date_annulation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    description VARCHAR(255) NOT NULL
+);

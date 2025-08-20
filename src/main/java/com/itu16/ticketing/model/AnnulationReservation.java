@@ -1,23 +1,24 @@
 package com.itu16.ticketing.model;
 
-import com.itu16.ticketing.dto.Status;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "reservation_details")
-public class ReservationDetails {
+@Entity
+@Table(name = "annulation_reservation")
+public class AnnulationReservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,14 +27,10 @@ public class ReservationDetails {
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    @ManyToOne
-    @JoinColumn(name = "siege_avion_id", nullable = false)
-    private SiegeAvion siegeAvion;
+    @Column(name="date_annulation")
+    private String dateAnnulation;
 
-    @Column(name = "montant", nullable = false)
-    private Double montant = 0.0;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column
+    private String description;
 
 }

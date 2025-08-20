@@ -1,5 +1,9 @@
 package com.itu16.ticketing.model;
 
+import java.beans.Transient;
+
+import com.itu16.ticketing.dto.Status;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,4 +41,7 @@ public class PromotionVol {
 
     @Column(name = "n_siege", nullable = false)
     private Integer nSiege = 0;
+
+    @jakarta.persistence.Transient
+    private Status status = Status.ACTIVE;
 }

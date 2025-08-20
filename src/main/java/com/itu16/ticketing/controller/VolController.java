@@ -75,6 +75,9 @@ public class VolController {
         vol.setVilleDepart(villeService.findById(villeDepartIdLong));
         vol.setVilleArrivee(villeService.findById(villeArriveeIdLong));
         volService.create(vol);
+
+        List<Vol> vols = volService.findAll();
+        mv.addObject("vols", vols);
         mv.setUrl("/vols.jsp");
         return mv;
     
@@ -87,6 +90,8 @@ public class VolController {
         ModelView mv = new ModelView();
         Long idLong = Long.valueOf(id);
         volService.delete(idLong);
+        List<Vol> vols = volService.findAll();
+        mv.addObject("vols", vols);
         mv.setUrl("/vols.jsp");
         return mv;
     }

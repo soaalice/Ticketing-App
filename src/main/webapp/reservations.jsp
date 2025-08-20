@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.itu16.ticketing.model.Reservation" %>
+<%@ page import="com.itu16.ticketing.dto.Status" %>
 
 <%
     List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
@@ -50,7 +51,11 @@
                     <div class="card reservation-card h-100 shadow-sm">
                         <div class="card-body">
                             <div class="status-badge">
-                                <span class="badge bg-success">Confirmée</span>
+                                <% if(reservation.getStatus() != Status.CANCELLED) { %>
+                                    <span class="badge bg-success">Confirmée</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Annulée</span>
+                                <% } %>
                             </div>
 
                             <h5 class="card-title mb-3">
@@ -96,8 +101,8 @@
                                     <!-- <a href="#" class="btn btn-outline-success btn-sm">
                                         <i class="fas fa-download me-1"></i>Facture
                                     </a> -->
-                                    <% if (isAdmin) { %>
-                                        <form action="${pageContext.request.contextPath}/reservations/delete" 
+                                    <% if (reservation.getStatus() != Status.CANCELLED) { %>
+                                        <form action="${pageContext.request.contextPath}/reservations/cancel" 
                                               method="post" class="d-inline ms-2">
                                             <input type="hidden" name="id" value="<%= reservation.getId() %>">
                                             <button type="submit" class="btn btn-outline-danger btn-sm" 

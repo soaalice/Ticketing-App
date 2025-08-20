@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.itu16.ticketing.model.AnnulationReservation;
+import com.itu16.ticketing.model.AnnulationReservationDetails;
 import com.itu16.ticketing.model.PrixTypeSiegeVol;
 import com.itu16.ticketing.model.Reservation;
+import com.itu16.ticketing.model.ReservationDetails;
 import com.itu16.ticketing.model.SiegeAvion;
 import com.itu16.ticketing.model.Utilisateur;
 import com.itu16.ticketing.model.Vol;
+import com.itu16.ticketing.service.AnnulationReservationDetailsService;
+import com.itu16.ticketing.service.AnnulationReservationService;
 import com.itu16.ticketing.service.PrixTypeSiegeVolService;
+import com.itu16.ticketing.service.ReservationDetailsService;
 import com.itu16.ticketing.service.ReservationService;
 import com.itu16.ticketing.service.SiegeAvionService;
 import com.itu16.ticketing.service.UtilisateurService;
@@ -17,7 +23,6 @@ import com.itu16.ticketing.service.VolService;
 
 import dev.CustomSession;
 import dev.ModelView;
-import jakarta.servlet.http.HttpServletRequest;
 import mg.annotation.AnnotationController;
 import mg.annotation.Param;
 import mg.annotation.Url;
@@ -28,10 +33,13 @@ import mg.annotation.verbs.Post;
 @AnnotationController
 public class ReservationController {
     private final ReservationService reservationService = ReservationService.getInstance();
+    private final ReservationDetailsService reservationDetailsService = ReservationDetailsService.getInstance();
     private final UtilisateurService utilisateurService = UtilisateurService.getInstance();
     private  final SiegeAvionService siegeAvionService = SiegeAvionService.getInstance();
     private final VolService volService = VolService.getInstance();
     private final PrixTypeSiegeVolService prixTypeSiegeVolService = PrixTypeSiegeVolService.getInstance();
+    private final AnnulationReservationService annulationReservationService = AnnulationReservationService.getInstance();
+    private final AnnulationReservationDetailsService annulationReservationDetailsService = AnnulationReservationDetailsService.getInstance();
 
     @Get
     @Url("reservations")
@@ -103,6 +111,43 @@ public class ReservationController {
         Vol vol = volService.findById(Long.parseLong(request.get("volId")));
         Reservation reservation = reservationService.generateReservation(vol, utilisateur, request);
         modelView.addObject("reservation", reservation);
+        return modelView;
+    }
+
+    @Post
+    @Url("reservations/cancel")
+    @Authentified(roles={"user", "admin"})
+    public ModelView annulerReservation(@Param(name = "id") String id, CustomSession session) {
+        Long idReservation = Long.parseLong(id);
+        Reservation reservation = reservationService.findById(idReservation);
+        String description = "Annulation de la réservation pour le vol " + reservation.getVol().getId();
+        if (session.get("role").equals("admin")) {
+            description += " par un administrateur";
+        } else {
+            description += " par l'utilisateur";
+        }
+        if (reservation != null) {
+            annulationReservationService.cancelReservation(reservation, description);
+        }
+        ModelView modelView = new ModelView();
+        List<Reservation> reservations = reservationService.findAll();
+        modelView.addObject("reservations", reservations);
+        modelView.setUrl("/reservations.jsp");
+        return modelView;
+    }
+
+    @Post
+    @Url("reservations/details/cancel")
+    @Authentified(roles={"user"})
+    public ModelView annulerReservationDetails(@Param(name="id") String id){
+        Long idReservationDetails = Long.parseLong(id);
+        ReservationDetails details = reservationDetailsService.findById(idReservationDetails);
+        if (details != null) {
+            annulationReservationDetailsService.cancelReservationDetails(details);
+        }
+        ModelView modelView = new ModelView();
+        modelView.setUrl("/reservation-details.jsp");
+        modelView.addObject("reservation", details.getReservation());
         return modelView;
     }
 }

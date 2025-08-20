@@ -1,8 +1,12 @@
 package com.itu16.ticketing.dto;
 
 public enum Status {
+    // Sieges
     FREE("Libre"),
     TAKEN("Réservé"),
+    // Vols
+    FULL("Complet"),
+    // Vols || Reservations
     ACTIVE("Active"),
     INACTIVE("Inactive"),
     SUSPENDED("Suspendue"),

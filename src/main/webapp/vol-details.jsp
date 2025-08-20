@@ -129,6 +129,25 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card-footer bg-white py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="${pageContext.request.contextPath}/vols" class="btn btn-light">
+                                <i class="fas fa-arrow-left me-2"></i>Retour
+                            </a>
+                            <% if(!isAdmin) { %>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-danger">
+                                        <i class="fas fa-ticket me-2"></i>Réserver pour ce vol
+                                    </button>
+                                    <form id="cancelForm" action="${pageContext.request.contextPath}/reservations/create" method="post"
+                                        class="d-none">
+                                        <input type="hidden" name="id" value="<%= vol.getId() %>">
+                                    </form>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
