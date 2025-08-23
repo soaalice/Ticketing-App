@@ -16,20 +16,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .promotion-card {
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
         }
         .promotion-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
         .reduction-badge {
             position: absolute;
             top: -10px;
-            right: -15px;
+            right: -10px;
             padding: 1rem;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             z-index: 1;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+        }
+        .seat-info {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(13, 110, 253, 0.1);
+            border-radius: 2rem;
+            color: #0d6efd;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -66,6 +77,15 @@
                             </h5>
                             
                             <div class="card-text">
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="seat-info">
+                                        <i class="fas fa-couch me-1"></i><%= promotion.getTypeSiege().getName() %>
+                                    </span>
+                                    <span class="badge bg-primary ms-2">
+                                        <i class="fas fa-chair me-1"></i><%= promotion.getNSiege() %> sièges
+                                    </span>
+                                </div>
+                                
                                 <p class="mb-2">
                                     <i class="fas fa-calendar me-2 text-secondary"></i>
                                     <strong>Départ:</strong> <%= vol.getDateDepart() %>
@@ -75,13 +95,22 @@
                                     <%= vol.getAvion().getModele().getName() %>
                                 </p>
                             </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="${pageContext.request.contextPath}/vols/details?id=<%= vol.getId() %>" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-info-circle me-1"></i>Détails du vol
-                                </a>
+
+                            <div class="card-footer bg-transparent border-top-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="${pageContext.request.contextPath}/vols/details?id=<%= vol.getId() %>"
+                                            class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-info-circle me-1"></i>Voir le vol
+                                        </a>
+                                        <% if (isLogged && !isAdmin) { %>
+                                            <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>"
+                                                class="btn btn-success">
+                                                <i class="fas fa-ticket-alt me-1"></i>Réserver
+                                            </a>
+                                            <% } %>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

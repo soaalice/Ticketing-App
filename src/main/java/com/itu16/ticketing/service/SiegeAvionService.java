@@ -20,7 +20,7 @@ public class SiegeAvionService extends CRUDService<SiegeAvion, Long> {
 
     public void updateStatus(SiegeAvion siegeAvion) {
         if (siegeAvion != null) {
-            Boolean isUpdated = getSingleValue("SELECT est_siege_libre_vol_actif(?)", Boolean.class, siegeAvion.getId());
+            Boolean isUpdated = getSingleValue("SELECT est_siege_libre_vol_actif(?)", Boolean.class,(int) (long) siegeAvion.getId());
             if (isUpdated != null) {
                 siegeAvion.setStatus(isUpdated ? Status.FREE : Status.TAKEN);
             } else {

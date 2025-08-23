@@ -1,11 +1,13 @@
 package com.itu16.ticketing.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.itu16.ticketing.dto.Status;
 import com.itu16.ticketing.model.PrixTypeSiegeVol;
+import com.itu16.ticketing.model.PromotionVol;
 import com.itu16.ticketing.model.Reservation;
 import com.itu16.ticketing.model.ReservationDetails;
 import com.itu16.ticketing.model.SiegeAvion;
@@ -20,6 +22,7 @@ public class ReservationService extends CRUDService<Reservation, Long> {
     private final ReservationDetailsService reservationDetailsService = ReservationDetailsService.getInstance();
     private final SiegeAvionService siegeAvionService = SiegeAvionService.getInstance();
     private final PrixTypeSiegeVolService prixTypeSiegeVolService = PrixTypeSiegeVolService.getInstance();
+    private final PromotionVolService promotionVolService = PromotionVolService.getInstance();
 
     private ReservationService() {
         super();
@@ -53,28 +56,67 @@ public class ReservationService extends CRUDService<Reservation, Long> {
 
     @Transactional
     public Reservation generateReservation(Vol vol, Utilisateur utilisateur, Map<String, String> request) {
-        System.out.println("Génération de la réservation...");
-        System.out.println("REQUETES MAP : " + request);
+        System.out.println("............................Génération de la réservation..................................");
         Reservation reservation = new Reservation();
 
         Integer nSiege = Integer.parseInt(request.get("nSiege"));
         System.err.println("Nombre de sièges à réserver: " + nSiege);
+
         List<ReservationDetails> reservationDetailsList = new ArrayList<>();
         double montantTotal = 0;
+        double montantPromu = 0;
+
         for (int i = 1; i <= nSiege; i++) {
             String paramName = "siegeAvionId" + i;
             String siegeIdStr = request.get(paramName);
+
             System.out.println(paramName + ": " + siegeIdStr);
+
             ReservationDetails reservationDetails = new ReservationDetails();
             if (siegeIdStr != null && !siegeIdStr.isEmpty()) {
                 try {
                     SiegeAvion siegeAvion = siegeAvionService.findById(Long.parseLong(siegeIdStr));
                     reservationDetails.setSiegeAvion(siegeAvion);
                     PrixTypeSiegeVol prix = prixTypeSiegeVolService.findByTypeSiegeVol(siegeAvion.getTypeSiege(), vol);
+                    double prixAReduire = prix.getPrix();
+
+                    System.out.println("Prix de base pour le siège " + siegeAvion.getId() + ": " + prixAReduire);
+
+                    List<PromotionVol> promotions = promotionVolService.findByVolId(vol.getId());
+                    System.out.println("Promotions applicables:"+promotions);
+
+                    if (promotions.size() > 0) {
+                        prixAReduire = 0;
+                    }
+
+                    for (PromotionVol promo : promotions) {
+                        if(prixAReduire == 0) {
+                            break;
+                        }
+
+                        if (promo.getStatus() == Status.ACTIVE 
+                            && promo.getTypeSiege().getId().intValue() == siegeAvion.getTypeSiege().getId().intValue()
+                            && promo.getNSiegesPromus().intValue() < promo.getNSiege().intValue()) {
+                                if (prixAReduire - prixAReduire * promo.getReduction()/100 <= 0) {
+                                    prixAReduire = 0;
+                                } else {
+                                    System.out.println("Application de la promotion: "+promo+" sur le siege +"+siegeAvion.getId());
+
+                                    prixAReduire -= prixAReduire * promo.getReduction()/100;
+                                    promo.setNSiege(promo.getNSiege() - 1);
+                                    promo.setNSiegesPromus(promo.getNSiegesPromus() + 1);
+                                    promotionVolService.update(promo);
+                                }
+                            System.out.println("Prix réduit après "+promo+" : "+prixAReduire);
+                        }
+                    }
+
                     reservationDetails.setMontant(prix.getPrix());
+                    reservationDetails.setMontantPromu(prixAReduire);
                     reservationDetailsList.add(reservationDetails);
 
                     montantTotal += prix.getPrix();
+                    montantPromu += prixAReduire;
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -82,8 +124,9 @@ public class ReservationService extends CRUDService<Reservation, Long> {
         }
         reservation.setReservationDetails(reservationDetailsList);
         reservation.setVol(vol);
-        reservation.setDateReservation(request.get("dateReservation"));
+        reservation.setDateReservation(LocalDateTime.now().toString());
         reservation.setMontantTotal(montantTotal);
+        reservation.setMontantPromu(montantPromu);
         reservation.setUtilisateur(utilisateur);
         reservationService.create(reservation);
         createDetails(reservation, reservationDetailsList);

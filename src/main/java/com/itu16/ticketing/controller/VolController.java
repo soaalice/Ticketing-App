@@ -131,6 +131,9 @@ public class VolController {
         vol.setVilleDepart(villeService.findById(villeDepartIdLong));
         vol.setVilleArrivee(villeService.findById(villeArriveeIdLong));
         volService.update(vol);
+
+        List<Vol> vols = volService.findAll();
+        mv.addObject("vols", vols);
         mv.setUrl("/vols.jsp");
         return mv;
     }

@@ -107,3 +107,17 @@ CREATE TABLE annulation_reservation_details(
     date_annulation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description VARCHAR(255) NOT NULL
 );
+
+-- Many to Many
+CREATE TABLE reservation_details_promotion (
+    reservation_details_id INT NOT NULL REFERENCES reservation_details(id),
+    promotion_vol_id INT NOT NULL REFERENCES promotion_vol(id),
+    PRIMARY KEY (reservation_details_id, promotion_vol_id)
+);
+
+-- CREATE TABLE reservation_details_promotion (
+--     id SERIAL PRIMARY KEY,
+--     reservation_details_id INT NOT NULL REFERENCES reservation_details(id),
+--     promotion_vol_id INT NOT NULL REFERENCES promotion_vol(id),
+--     UNIQUE (reservation_details_id, promotion_vol_id)
+-- );

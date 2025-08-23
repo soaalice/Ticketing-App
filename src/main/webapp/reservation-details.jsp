@@ -137,9 +137,22 @@
                                                                 <h6 class="mb-1">
                                                                     <%= detail.getSiegeAvion().getTypeSiege().getName() %>
                                                                 </h6>
-                                                                <p class="text-muted mb-0">
-                                                                    Prix: <%= String.format("%,.2f", detail.getMontant()) %> Ar
-                                                                </p>
+                                                                <% if (detail.getMontantPromu() > 0) { 
+                                                                    %>
+                                                                    <p class="text-muted mb-0">
+                                                                        <span style="text-decoration: line-through;">
+                                                                            <%= String.format("%,.2f", detail.getMontant()) %> Ar
+                                                                        </span>
+                                                                        <br>
+                                                                        <span class="text-success fw-bold">
+                                                                            <%= String.format("%,.2f", detail.getMontantPromu()) %> Ar
+                                                                        </span>
+                                                                    </p>
+                                                                <% } else { %>
+                                                                    <p class="text-muted mb-0">
+                                                                        Prix: <%= String.format("%,.2f", detail.getMontant()) %> Ar
+                                                                    </p>
+                                                                <% } %>
                                                             </div>
                                                             <% if(!isAdmin && !isCancelled && reservation.getStatus() != Status.CANCELLED) { %>
                                                                 <div class="ms-3">
@@ -175,14 +188,20 @@
                                 <% if (reservation.getMontantApresAnnulation() != reservation.getMontantTotal()) { %>
                                     <div class="d-flex justify-content-between mb-2 text-muted">
                                         <span>Montant initial</span>
-                                        <span>
+                                        <span class="text-success">
                                             <%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Montant réduit</span>
+                                        <span class="text-danger">
+                                            - <%= String.format("%,.2f", reservation.getMontantReduit()) %> Ar
                                         </span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Montant annulé</span>
                                         <span class="text-danger">
-                                            - <%= String.format("%,.2f", reservation.getMontantTotal() - reservation.getMontantApresAnnulation()) %> Ar
+                                            - <%= String.format("%,.2f", reservation.getMontantAnnule()) %> Ar
                                         </span>
                                     </div>
                                     <div class="d-flex justify-content-between mt-3 pt-3 border-top">
@@ -194,7 +213,7 @@
                                 <% } else { %>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Montant total</span>
-                                        <strong><%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar</strong>
+                                        <strong><%= String.format("%,.2f", reservation.getMontantFinal()) %> Ar</strong>
                                     </div>
                                 <% } %>
                             </div>

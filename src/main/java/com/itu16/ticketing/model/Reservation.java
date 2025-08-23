@@ -49,15 +49,38 @@ public class Reservation {
     @Transient
     private Double montantApresAnnulation = 0.0;
 
+    @Column(name = "montant_promu", nullable = false)
+    private Double montantPromu = 0.0;
+
     public String getNumero() {
         return id + "-" + utilisateur.getId() + "-" + vol.getId();
     }
 
     public void setMontantApresAnnulation(){
+        System.out.println("details: "+reservationDetails.size());
         for (ReservationDetails details : reservationDetails) {
             if (details.getStatus() != Status.CANCELLED) {
-                montantApresAnnulation += details.getMontant();
+                montantApresAnnulation += details.getMontantFinal();
             }
         }
+
+        System.out.println("montantApresAnnulation: " + montantApresAnnulation);
+        System.out.println("montantFinal: " + getMontantFinal());
+        System.out.println("montantAnnule: " + getMontantAnnule());
+    }
+
+    public double getMontantReduit(){
+        if (montantPromu != null && montantPromu > 0) return montantTotal - montantPromu;
+        return 0;
+    }
+
+    // Ce qu'on a annulé par rapport au montant final qui est soit le montant total soit le montant promu
+    public double getMontantAnnule(){
+        return getMontantFinal() - getMontantApresAnnulation();
+    }
+
+    public double getMontantFinal(){
+        if (montantPromu != null && montantPromu > 0 ) return montantPromu;
+        return montantTotal;
     }
 }

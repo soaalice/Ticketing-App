@@ -3,9 +3,10 @@
 <%@ page import="com.itu16.ticketing.model.Vol" %>
 <%@ page import="com.itu16.ticketing.model.SiegeAvion" %>
 <%@ page import="com.itu16.ticketing.dto.Status" %>
+<%@ page import="com.itu16.ticketing.model.PromotionVol" %>
 
-<% Vol vol=(Vol) request.getAttribute("vol"); List<SiegeAvion> sieges = (List<SiegeAvion>)
-request.getAttribute("sieges");
+<% 
+    Vol vol=(Vol) request.getAttribute("vol"); List<SiegeAvion> sieges = (List<SiegeAvion>) request.getAttribute("sieges");
 %>
 
 <!DOCTYPE html>
@@ -154,27 +155,27 @@ request.getAttribute("sieges");
 
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
-                        const checkboxes = document.querySelectorAll('.siege-checkbox');
+                        const seatCheckboxes = document.querySelectorAll('.siege-checkbox');
                         const totalAmount = document.getElementById('totalAmount');
                         const form = document.querySelector('form');
                         const nSiegeInput = document.getElementById('nSiege');
 
                         // Met à jour les noms et total
-                        function updateSelections() {
+                        function updateSeatSelections() {
                             let total = 0;
-                            let selected = [];
+                            let selectedSeats = [];
 
-                            checkboxes.forEach(checkbox => {
+                            seatCheckboxes.forEach(checkbox => {
                                 checkbox.removeAttribute('name'); // reset all
                                 if (checkbox.checked) {
-                                    selected.push(checkbox);
+                                    selectedSeats.push(checkbox);
                                     const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
                                     total += price;
                                 }
                             });
 
                             // Réattribuer les noms selon l'ordre
-                            selected.forEach((cb, index) => {
+                            selectedSeats.forEach((cb, index) => {
                                 cb.setAttribute('name', 'siegeAvionId' + (index + 1));
                             });
 
@@ -183,25 +184,25 @@ request.getAttribute("sieges");
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
                             });
-                            nSiegeInput.value = selected.length;
+                            nSiegeInput.value = selectedSeats.length;
                         }
 
                         // Écouteurs de changement sur chaque case
-                        checkboxes.forEach(checkbox => {
-                            checkbox.addEventListener('change', updateSelections);
+                        seatCheckboxes.forEach(checkbox => {
+                            checkbox.addEventListener('change', updateSeatSelections);
                         });
 
                         // Gestion du submit
                         form.addEventListener('submit', function (e) {
-                            const selected = Array.from(checkboxes).filter(cb => cb.checked);
-                            if (selected.length === 0) {
+                            const selectedSeats = Array.from(seatCheckboxes).filter(cb => cb.checked);
+                            if (selectedSeats.length === 0) {
                                 e.preventDefault();
                                 alert('Veuillez sélectionner au moins un siège.');
                                 return;
                             }
 
                             const total = parseFloat(totalAmount.textContent.replace(/\s/g, '').replace(',', '.')) || 0;
-                            const confirmMessage = `Vous avez sélectionné ` + selected.length + ` siège(s) pour un total de ` + total.toFixed(2) + ` Ar.\n\nVoulez-vous confirmer cette réservation ?`;
+                            const confirmMessage = `Vous avez sélectionné ` + selectedSeats.length + ` siège(s) pour un total de ` + total.toFixed(2) + ` Ar.\n\nVoulez-vous confirmer cette réservation ?`;
 
                             if (!confirm(confirmMessage)) {
                                 e.preventDefault();
@@ -209,7 +210,7 @@ request.getAttribute("sieges");
                         });
 
                         // Init
-                        updateSelections();
+                        updateSeatSelections();
                     });
             </script>
 </body>

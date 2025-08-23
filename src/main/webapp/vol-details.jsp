@@ -3,6 +3,7 @@
 
 <%
     Vol vol = (Vol) request.getAttribute("vol");
+    vol.setDuree();
 %>
 
 <html>
@@ -108,7 +109,7 @@
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Durée estimée</h6>
-                                            <p class="mb-0 fw-bold" id="flight-duration">Calcul en cours...</p>
+                                            <p class="mb-0 fw-bold"> <%= vol.getDuree() %> </p>
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +123,7 @@
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Statut</h6>
-                                            <p class="mb-0 fw-bold" id="flight-status">Vérification...</p>
+                                            <p class="mb-0 fw-bold"> <%= vol.getStatus() %> </p>
                                         </div>
                                     </div>
                                 </div>
@@ -135,15 +136,12 @@
                             <a href="${pageContext.request.contextPath}/vols" class="btn btn-light">
                                 <i class="fas fa-arrow-left me-2"></i>Retour
                             </a>
-                            <% if(!isAdmin) { %>
+                            <% if(isLogged && !isAdmin) { %>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-danger">
-                                        <i class="fas fa-ticket me-2"></i>Réserver pour ce vol
-                                    </button>
-                                    <form id="cancelForm" action="${pageContext.request.contextPath}/reservations/create" method="post"
-                                        class="d-none">
-                                        <input type="hidden" name="id" value="<%= vol.getId() %>">
-                                    </form>
+                                    <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>"
+                                        class="btn btn-success btn-sm ms-2">
+                                        <i class="fas fa-ticket me-1"></i>Réserver
+                                    </a>
                                 </div>
                             <% } %>
                         </div>
@@ -154,68 +152,5 @@
     </div>
 
     <%@ include file="assets/inc/footer.jsp" %>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fonction pour convertir le format de date
-            function parseDateTime(dateStr) {
-                const [datePart, timePartRaw] = dateStr.trim().split(' ');
-                const timePart = timePartRaw.split('.')[0]; // Enlève les millisecondes
-                const [year, month, day] = datePart.split('-');
-                const [hours, minutes, seconds] = timePart.split(':');
-                return new Date(year, month - 1, day, hours, minutes, seconds);
-            }
-
-            // Formater la durée
-            function formatDuration(hours, minutes) {
-                return `${hours}h ${minutes.toString().padStart(2, '0')}min`;
-            }
-
-            // Récupérer les dates du vol
-            const departDate = new Date("<%= vol.getDateDepart().toString().replace(' ', 'T') %>");
-            const arriveeDate = new Date("<%= vol.getDateArrivee().toString().replace(' ', 'T') %>");
-            const now = new Date();
-
-            // Calculer la durée du vol
-            const durationMs = arriveeDate - departDate;
-            const hours = Math.floor(durationMs / (1000 * 60 * 60));
-            const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById('flight-duration').textContent = formatDuration(hours, minutes);
-
-            // Déterminer le statut du vol
-            const statusIcon = document.getElementById('status-icon');
-            const statusText = document.getElementById('flight-status');
-            const statusContainer = statusText.closest('.detail-item');
-
-            console.log("Départ :", departDate);
-            console.log("Arrivée :", arriveeDate);
-            console.log("Durée (ms) :", arriveeDate - departDate);
-
-            function updateStatus(iconClass, text, colorClass) {
-                statusIcon.className = iconClass;
-                statusText.textContent = text;
-                // Mise à jour de la couleur du cercle
-                statusIcon.closest('.rounded-circle').className = 
-                    `rounded-circle ${colorClass} bg-opacity-10 p-3 me-3`;
-            }
-
-            if (now < departDate) {
-                // Vol à venir
-                updateStatus('fas fa-clock text-primary', 'Programmé', 'bg-primary');
-            } else if (now >= departDate && now <= arriveeDate) {
-                // Vol en cours
-                updateStatus('fas fa-plane text-success', 'En vol', 'bg-success');
-            } else {
-                // Vol terminé
-                updateStatus('fas fa-check-circle text-success', 'Terminé', 'bg-success');
-            }
-
-            // Vérifier si le vol est retardé
-            const delayThreshold = 15 * 60 * 1000; // 15 minutes en millisecondes
-            if (now > departDate && (now - departDate) > delayThreshold && now < arriveeDate) {
-                updateStatus('fas fa-exclamation-circle text-warning', 'Retardé', 'bg-warning');
-            }
-        });
-    </script>
 </body>
 </html>

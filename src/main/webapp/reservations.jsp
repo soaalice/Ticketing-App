@@ -46,6 +46,7 @@
             <% 
             if (reservations != null && !reservations.isEmpty()) {
                 for (Reservation reservation : reservations) {
+                    reservation.setMontantApresAnnulation();
             %>
                 <div class="col-md-6 col-lg-4">
                     <div class="card reservation-card h-100 shadow-sm">
@@ -86,7 +87,8 @@
                                         <strong>Montant total</strong>
                                     </div>
                                     <span class="h5 mb-0 text-success">
-                                        <%= String.format("%,.2f", reservation.getMontantTotal()) %> Ar
+                                        <%= String.format("%,.2f", reservation.getMontantApresAnnulation() !=reservation.getMontantTotal() ?
+                                            reservation.getMontantApresAnnulation() : reservation.getMontantFinal() ) %> Ar
                                     </span>
                                 </div>
                             </div>

@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FlyBook - Réservez vos vols au meilleur prix</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <style>
         .hero {
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('assets/img/landscape.jpg');
             background-size: cover;
             background-position: center;
-            min-height: 85vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             position: relative;
@@ -20,10 +20,62 @@
         .search-form {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-top: 2rem;
         }
+        
+        .search-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .search-input-wrapper {
+            width: 100%;
+        }
+        
+        .search-button {
+            height: 58px;
+            padding: 0 30px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .search-button .button-text {
+            display: inline;
+        }
+        
+        @media (min-width: 992px) {
+            .search-input-group {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .search-input-wrapper {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .search-button {
+                width: auto;
+            }
+
+            .search-button .button-text {
+                display: none;
+            }
+
+            .button-text {
+                display: inline;
+            }
+        }
+
+        .form-floating > .form-control {
+            border-radius: 8px;
+        }
+
         .feature-card {
             border: none;
             transition: transform 0.3s ease;
@@ -94,17 +146,19 @@
         }
         .btn-cta {
             padding: 15px 40px;
-            font-size: 1.2rem;
+            font-size: 1.2rem !important;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 4px;
             background: linear-gradient(45deg, #0d6efd, #0dcaf0);
             border: none;
             transition: all 0.3s ease;
+            font-family: "Montserrat", sans-serif !important;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         .btn-cta:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             background: linear-gradient(45deg, #0b5ed7, #0bacbe);
+            color: white !important;
         }
         .price-tag {
             background: rgba(255, 255, 255, 0.1);
@@ -144,8 +198,8 @@
                     %>
 
                     <form class="search-form" id="searchForm" action="${pageContext.request.contextPath}/vols" method="GET">
-                        <div class="row g-4">
-                            <div class="col-md-4">
+                        <div class="search-input-group">
+                            <div class="search-input-wrapper">
                                 <div class="form-floating">
                                     <input name="villeDepart" type="text" class="form-control" id="from" 
                                            placeholder="Ville de départ" list="from-cities">
@@ -153,25 +207,24 @@
                                     <datalist id="from-cities"></datalist>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="search-input-wrapper">
                                 <div class="form-floating">
                                     <input name="villeArrivee" type="text" class="form-control" id="to" 
                                            placeholder="Ville d'arrivée" list="to-cities">
-                                    <label style="color: var(--bs-gray-600);" class="text-gray-600" for="to">Arrivée</label>
+                                    <label style="color: var(--bs-gray-600);" for="to">Arrivée</label>
                                     <datalist id="to-cities"></datalist>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="search-input-wrapper">
                                 <div class="form-floating">
                                     <input name="dateDepart" type="date" class="form-control" id="date">
                                     <label for="date">Date de départ</label>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-search me-2"></i>Chercher des vols
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-primary search-button">
+                                <i class="fas fa-search"></i>
+                                <span class="button-text ms-2">Rechercher des vols</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -292,15 +345,15 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center cta-content">
-                    <h2 class="display-4 text-white mb-4">
-                        Des Voyages Inoubliables à Prix Exceptionnels
+                    <h2 class="display-4 text-white mb-4" style="font-weight: 700;">
+                        Des voyages inoubliables à prix exceptionnels !
                     </h2>
                     <p class="lead text-white mb-4">
                         Profitez de nos offres spéciales pour vos prochaines aventures
                     </p>
                     <a href="${pageContext.request.contextPath}/vols" 
                        class="btn btn-cta btn-lg">
-                        <i class="fas fa-plane-departure me-2"></i>
+                        <i class="fas fa-plane-up me-2"></i>
                         Réservez Maintenant
                     </a>
                 </div>
