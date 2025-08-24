@@ -17,6 +17,14 @@
     <title>Détails de la Réservation - FlyBook</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        body{
+            background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, -0.3)), url('../assets/img/beach.avif');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .card-body{
+            padding: 5% 2%;
+        }
         .flight-info {
             background: rgba(13, 110, 253, 0.05);
             border-radius: 1rem;
@@ -64,6 +72,44 @@
             background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
         }
+        .child-seat-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .status-container {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+        }
+
+        .status-badge i {
+            font-size: 0.8rem;
+        }
+
+        .status-badge.cancelled {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .status-badge.age-category {
+            color: #0dcaf0;
+            background-color: rgba(13, 202, 240, 0.1);
+        }
+
+        .detail-info {
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -76,7 +122,7 @@
                     <div class="card-header bg-white py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h1 class="h3 mb-1">Réservation #<%= reservation.getId() %></h1>
+                                <h1 class="h3 mb-1">Réservation N°<%= reservation.getId() %></h1>
                                 <p class="text-muted mb-0">Réservée le <%= reservation.getDateReservation() %></p>
                             </div>
                             <div class="status-badge">
@@ -123,11 +169,20 @@
                                         %>
                                             <div class="col-md-6">
                                                 <div class="detail-card card border-0 shadow-sm position-relative <%= isCancelled ? "cancelled" : "" %>">
-                                                    <% if (isCancelled) { %>
-                                                        <div class="cancelled-label">
-                                                            <i class="fas fa-ban me-1"></i>Annulé
-                                                        </div>
-                                                    <% } %>
+                                                    <div class="card-header bg-white d-flex gap-2 align-items-center">
+                                                        <% if (detail.getAgeCategorie() != null) { %>
+                                                            <span class="status-badge age-category badge">
+                                                                <i class="fas fa-user-alt me-1"></i>
+                                                                <%= detail.getAgeCategorie().getName() %>
+                                                            </span>
+                                                        <% } %>
+                                                        <% if (isCancelled) { %>
+                                                            <span class="status-badge cancelled badge">
+                                                                <i class="fas fa-ban me-1"></i>
+                                                                Annulé
+                                                            </span>
+                                                        <% } %>
+                                                    </div>
                                                     <div class="card-body">
                                                         <div class="d-flex align-items-center">
                                                             <div class="seat-badge me-3 <%= isCancelled ? "cancelled" : "" %>">

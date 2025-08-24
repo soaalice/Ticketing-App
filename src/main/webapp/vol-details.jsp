@@ -11,6 +11,11 @@
     <title>Fiche de Vol</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        body{
+            background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, -0.3)), url('../assets/img/tropic.avif');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
         .flight-path {
             position: relative;
             padding: 2rem;
@@ -18,7 +23,7 @@
             border-radius: 1rem;
             margin-bottom: 2rem;
         }
-        .flight-path::after {
+        /* .flight-path::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -26,7 +31,7 @@
             right: 25%;
             border-top: 2px dashed #dee2e6;
             z-index: 0;
-        }
+        } */
         .detail-item {
             background: #fff;
             border-radius: 0.5rem;
@@ -50,7 +55,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h1 class="h3 mb-1">Vol n°<%= vol.getId() %></h1>
-                                <p class="text-muted mb-0"><%= vol.getAvion().getModele().getName() %></p>
+                                <p class="text-muted mb-0">Ref: <%= vol.getAvion().toString() %></p>
                             </div>
                             <% if (isAdmin) { %>
                                 <div class="btn-group">
@@ -123,7 +128,7 @@
                                         </div>
                                         <div>
                                             <h6 class="text-muted mb-1">Statut</h6>
-                                            <p class="mb-0 fw-bold"> <%= vol.getStatus() %> </p>
+                                            <p class="mb-0 fw-bold"> <%= vol.getStatus().getLabel() %> </p>
                                         </div>
                                     </div>
                                 </div>

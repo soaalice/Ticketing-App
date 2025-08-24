@@ -38,6 +38,9 @@ public class Vol {
     @Column(name = "date_arrivee", nullable = false)
     private String dateArrivee;
 
+    @Column(name="date_butoire_reservation", nullable = false)
+    private String dateButoireReservation;
+
     @ManyToOne
     @JoinColumn(name = "ville_depart_id", nullable = false)
     private Ville villeDepart;

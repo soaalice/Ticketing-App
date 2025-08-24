@@ -41,6 +41,13 @@ public class ReservationDetails {
     @Column(name = "montant_promu", nullable = false)
     private Double montantPromu = 0.0;
 
+    // @Column(name = "is_enfant", nullable = false)
+    // private Boolean isEnfant = false;
+
+    @ManyToOne
+    @JoinColumn(name = "age_categorie_id", nullable = false)
+    private AgeCategorie ageCategorie;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 

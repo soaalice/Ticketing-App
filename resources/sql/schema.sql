@@ -68,14 +68,25 @@ CREATE TABLE reservation(
     utilisateur_id INT NOT NULL REFERENCES utilisateur(id),
     vol_id INT NOT NULL REFERENCES vol(id),
     montant_total NUMERIC NOT NULL DEFAULT 0,
+    montant_promu NUMERIC NOT NULL DEFAULT 0,
     date_reservation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE age_categorie (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    min INT NOT NULL DEFAULT 0,
+    max INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE reservation_details(
     id SERIAL PRIMARY KEY,
     reservation_id INT NOT NULL REFERENCES reservation(id),
     siege_avion_id INT NOT NULL REFERENCES siege_avion(id),
-    montant NUMERIC NOT NULL DEFAULT 0
+    montant NUMERIC NOT NULL DEFAULT 0,
+    montant_promu NUMERIC NOT NULL DEFAULT 0,
+    -- is_enfant BOOLEAN NOT NULL DEFAULT FALSE
+    age_categorie_id INT REFERENCES age_categorie(id)
 );
 
 CREATE TABLE promotion_vol(

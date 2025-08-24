@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connexion - FlyBook</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> -->
   <style>
   /* Général */
     body {
@@ -119,7 +119,7 @@
         </div>
         <button type="submit" class="btn">Se connecter</button>
         <div class="signup">
-          <p>Pas encore de compte ? <a href="${pageContext.request.contextPath}/signin">S'inscrire</a></p>
+          <p>Vous êtes nouveau ? <a href="${pageContext.request.contextPath}/signin">Inscrivez-vous.</a></p>
         </div>
       </form>
     </div>

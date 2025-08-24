@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.itu16.ticketing.model.AnnulationReservation;
-import com.itu16.ticketing.model.AnnulationReservationDetails;
 import com.itu16.ticketing.model.PrixTypeSiegeVol;
-import com.itu16.ticketing.model.PromotionVol;
 import com.itu16.ticketing.model.Reservation;
 import com.itu16.ticketing.model.ReservationDetails;
 import com.itu16.ticketing.model.SiegeAvion;
 import com.itu16.ticketing.model.Utilisateur;
 import com.itu16.ticketing.model.Vol;
+import com.itu16.ticketing.model.AgeCategorie;
 import com.itu16.ticketing.service.AnnulationReservationDetailsService;
 import com.itu16.ticketing.service.AnnulationReservationService;
 import com.itu16.ticketing.service.PrixTypeSiegeVolService;
-import com.itu16.ticketing.service.PromotionVolService;
+import com.itu16.ticketing.service.AgeCategorieService;
 import com.itu16.ticketing.service.ReservationDetailsService;
 import com.itu16.ticketing.service.ReservationService;
 import com.itu16.ticketing.service.SiegeAvionService;
@@ -42,6 +40,7 @@ public class ReservationController {
     private final PrixTypeSiegeVolService prixTypeSiegeVolService = PrixTypeSiegeVolService.getInstance();
     private final AnnulationReservationService annulationReservationService = AnnulationReservationService.getInstance();
     private final AnnulationReservationDetailsService annulationReservationDetailsService = AnnulationReservationDetailsService.getInstance();
+    private final AgeCategorieService ageCategorieService = AgeCategorieService.getInstance();
 
     @Get
     @Url("reservations")
@@ -94,6 +93,9 @@ public class ReservationController {
             siegeAvionService.updateStatus(siege);
         }
         modelView.addObject("sieges", sieges);
+
+        List<AgeCategorie> ageCategories = ageCategorieService.findAll();
+        modelView.addObject("ageCategories", ageCategories);
         return modelView;
     }
 

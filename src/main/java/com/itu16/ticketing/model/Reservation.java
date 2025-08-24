@@ -40,6 +40,9 @@ public class Reservation {
     @Column(name = "date_reservation", nullable=false)
     private String dateReservation;
 
+    @Column(name = "date_butoire_annulation", nullable = false)
+    private String dateButoireAnnulation;
+
     @OneToMany(mappedBy = "reservation", fetch = FetchType.EAGER)
     private List<ReservationDetails> reservationDetails = new ArrayList<>();
 
@@ -57,16 +60,11 @@ public class Reservation {
     }
 
     public void setMontantApresAnnulation(){
-        System.out.println("details: "+reservationDetails.size());
         for (ReservationDetails details : reservationDetails) {
             if (details.getStatus() != Status.CANCELLED) {
                 montantApresAnnulation += details.getMontantFinal();
             }
         }
-
-        System.out.println("montantApresAnnulation: " + montantApresAnnulation);
-        System.out.println("montantFinal: " + getMontantFinal());
-        System.out.println("montantAnnule: " + getMontantAnnule());
     }
 
     public double getMontantReduit(){

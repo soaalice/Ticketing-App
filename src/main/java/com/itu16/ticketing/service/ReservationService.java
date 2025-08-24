@@ -1,6 +1,7 @@
 package com.itu16.ticketing.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import com.itu16.ticketing.model.ReservationDetails;
 import com.itu16.ticketing.model.SiegeAvion;
 import com.itu16.ticketing.model.Utilisateur;
 import com.itu16.ticketing.model.Vol;
+import com.itu16.ticketing.model.AgeCategorie;
+import com.itu16.ticketing.model.Param;
 
 import jakarta.transaction.Transactional;
 
@@ -23,6 +26,8 @@ public class ReservationService extends CRUDService<Reservation, Long> {
     private final SiegeAvionService siegeAvionService = SiegeAvionService.getInstance();
     private final PrixTypeSiegeVolService prixTypeSiegeVolService = PrixTypeSiegeVolService.getInstance();
     private final PromotionVolService promotionVolService = PromotionVolService.getInstance();
+    private final AgeCategorieService ageCategorieService = AgeCategorieService.getInstance();
+    private final ParamService paramService = ParamService.getInstance();
 
     private ReservationService() {
         super();
@@ -57,6 +62,8 @@ public class ReservationService extends CRUDService<Reservation, Long> {
     @Transactional
     public Reservation generateReservation(Vol vol, Utilisateur utilisateur, Map<String, String> request) {
         System.out.println("............................Génération de la réservation..................................");
+
+        System.err.println("REQUEST MAP: " + request);
         Reservation reservation = new Reservation();
 
         Integer nSiege = Integer.parseInt(request.get("nSiege"));
@@ -73,6 +80,15 @@ public class ReservationService extends CRUDService<Reservation, Long> {
             System.out.println(paramName + ": " + siegeIdStr);
 
             ReservationDetails reservationDetails = new ReservationDetails();
+
+            String ageCategorieParam = "ageCategorie" + i;
+            String ageCategorie = request.get(ageCategorieParam);
+            AgeCategorie age = null;
+            if (ageCategorie != null && !ageCategorie.isEmpty()) {
+                age = ageCategorieService.findById(Long.parseLong(ageCategorie));
+            }
+            reservationDetails.setAgeCategorie(age);
+
             if (siegeIdStr != null && !siegeIdStr.isEmpty()) {
                 try {
                     SiegeAvion siegeAvion = siegeAvionService.findById(Long.parseLong(siegeIdStr));
@@ -85,7 +101,8 @@ public class ReservationService extends CRUDService<Reservation, Long> {
                     List<PromotionVol> promotions = promotionVolService.findByVolId(vol.getId());
                     System.out.println("Promotions applicables:"+promotions);
 
-                    if (promotions.size() > 0) {
+                    // Si aucune promotion n'est applicable, le prix réduit est 0
+                    if (promotions.size() <= 0) {
                         prixAReduire = 0;
                     }
 
@@ -138,5 +155,21 @@ public class ReservationService extends CRUDService<Reservation, Long> {
             details.setReservation(reservation);
             reservationDetailsService.create(details);
         }
+    }
+
+    public void setDateButoireAnnulation(Reservation reservation) {
+        // A priori ca doit etre la valeur de l'heure avant le départ du vol
+        Param param = paramService.findByName("heure_minimale_annulation");
+        if (param != null) {
+            LocalDateTime dateTime = LocalDateTime.parse(reservation.getVol().getDateDepart());
+            dateTime = dateTime.minusHours(Long.parseLong(param.getValue()));
+            reservation.setDateButoireAnnulation(dateTime.toString());
+        }
+    }
+
+    @Override
+    public void create(Reservation entity) {
+        setDateButoireAnnulation(entity);
+        super.create(entity);
     }
 }

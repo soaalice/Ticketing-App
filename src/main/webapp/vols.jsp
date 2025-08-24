@@ -40,15 +40,16 @@
                             <div class="card-text">
                                 <p class="mb-2">
                                     <i class="fas fa-plane me-2 text-secondary"></i>
+                                    <strong>Ref :</strong>
                                     <%= vol.getAvion().toString() %>
                                 </p>
                                 <p class="mb-2">
                                     <i class="fas fa-calendar me-2 text-secondary"></i>
-                                    <strong>Départ:</strong> <%= vol.getDateDepart() %>
+                                    <strong>Départ :</strong> <%= vol.getDateDepart() %>
                                 </p>
                                 <p class="mb-3">
                                     <i class="fas fa-calendar-check me-2 text-secondary"></i>
-                                    <strong>Arrivée:</strong> <%= vol.getDateArrivee() %>
+                                    <strong>Arrivée :</strong> <%= vol.getDateArrivee() %>
                                 </p>
                             </div>
                         </div>
@@ -59,19 +60,23 @@
                                        class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-info-circle me-1"></i>Détails
                                     </a>
-                                    <% if (isLogged && !isAdmin) { %>
-                                        <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>" 
-                                           class="btn btn-success btn-sm ms-2">
-                                            <i class="fas fa-ticket me-1"></i>Réserver
-                                        </a>
-                                    <% } %>
                                 </div>
+                                    <% if (isLogged && !isAdmin) { %>
+                                        <div class="btn-group">
+                                            <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>" 
+                                            class="btn btn-success btn-sm ms-2">
+                                                <i class="fas fa-ticket me-1"></i>Réserver
+                                            </a>
+                                        </div>
+                                    <% } %>
                                 <% if (isAdmin) { %>
                                     <div class="btn-group">
                                         <a href="${pageContext.request.contextPath}/vols/edit?id=<%= vol.getId() %>" 
                                            class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-edit me-1"></i>Modifier
                                         </a>
+                                    </div>
+                                    <div class="btn-group">
                                         <form action="${pageContext.request.contextPath}/vols/delete?id=<%= vol.getId() %>" 
                                               method="post" class="d-inline">
                                             <button type="submit" class="btn btn-outline-danger btn-sm ms-2" 

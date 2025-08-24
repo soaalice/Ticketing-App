@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <style>
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('assets/img/landscape.jpg');
+            background: linear-gradient(rgba(0, 0, 0, -0.5), rgba(0, 0, 0, 0.7)), url('assets/img/landscape.jpg');
             background-size: cover;
             background-position: center;
-            min-height: 100vh;
+            min-height: 95vh;
             display: flex;
             align-items: center;
             position: relative;
         }
         .search-form {
-            background: rgba(255, 255, 255, 0.95);
+            /* background: rgba(255, 255, 255, 0.95); */
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -87,7 +87,8 @@
         }
         .feature-icon {
             font-size: 2.5rem;
-            color: #0d6efd;
+            /* color: #0d6efd; */
+            color: #00B2CA;
         }
         .destination-card {
             position: relative;
@@ -191,7 +192,7 @@
                         } else {
                     %>
                             <div class="alert" role="alert">
-                                Veuillez vous <a href="${pageContext.request.contextPath}/login" class="link-warning">connecter</a> pour réserver un vol.
+                                <a href="${pageContext.request.contextPath}/login" class="link-warning">Connectez-vous</a> pour réserver un vol.
                             </div>
                     <%
                         }

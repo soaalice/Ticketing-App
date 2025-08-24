@@ -2,9 +2,10 @@ package com.itu16.ticketing.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
-import com.itu16.ticketing.dto.Status;
+import com.itu16.ticketing.model.Param;
 import com.itu16.ticketing.model.Vol;
 import com.itu16.ticketing.utils.DateConverter;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityManager;
 public class VolService extends CRUDService<Vol, Long> {
 
     private static VolService volService;
+    private static ParamService paramService = ParamService.getInstance();
 
     private VolService() {
         super();
@@ -67,11 +69,20 @@ public class VolService extends CRUDService<Vol, Long> {
         }
     }
 
-    private void updateVolStatus(Vol vol) {
-        Integer nSiegeLibre = getSingleValue("SELECT get_nombre_sieges_libres(?)", Integer.class, (int) (long) vol.getId());
-        if (nSiegeLibre != null && nSiegeLibre == 0) {
-            vol.setStatus(Status.FULL);
+    public void setDateButoireReservation(Vol vol) {
+        // A priori ca doit etre la valeur de l'heure avant le départ du vol
+        Param param = paramService.findByName("heure_minimale_fin_reservation");
+        if (param != null) {
+            LocalDateTime dateTime = LocalDateTime.parse(vol.getDateDepart());
+            dateTime = dateTime.minusHours(Long.parseLong(param.getValue()));
+            vol.setDateButoireReservation(dateTime.toString());
         }
+    }
+
+    @Override
+    public void create(Vol entity) {
+        setDateButoireReservation(entity);
+        super.create(entity);
     }
 
 }

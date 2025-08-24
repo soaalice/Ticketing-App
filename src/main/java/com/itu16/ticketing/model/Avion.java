@@ -31,7 +31,7 @@ public class Avion {
 
     @Override
     public String toString() {
-        return "A"+id + "-" + modele.toString() + "-" + dateFabrication;
+        return "A"+id + "-" + modele.toString() + "-" + dateFabrication.replace("-", "");
     }
 
     @OneToMany(mappedBy = "avion", fetch=FetchType.EAGER)

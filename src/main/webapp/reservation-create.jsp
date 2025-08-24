@@ -4,9 +4,11 @@
 <%@ page import="com.itu16.ticketing.model.SiegeAvion" %>
 <%@ page import="com.itu16.ticketing.dto.Status" %>
 <%@ page import="com.itu16.ticketing.model.PromotionVol" %>
+<%@ page import="com.itu16.ticketing.model.AgeCategorie" %>
 
 <% 
     Vol vol=(Vol) request.getAttribute("vol"); List<SiegeAvion> sieges = (List<SiegeAvion>) request.getAttribute("sieges");
+    List<AgeCategorie> ageCategories = (List<AgeCategorie>) request.getAttribute("ageCategories");
 %>
 
 <!DOCTYPE html>
@@ -39,6 +41,9 @@
         }
         .siege-card.taken:hover {
             transform: none;
+        }
+        .age-select {
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -100,8 +105,7 @@
                                                 class="siege-checkbox d-none"
                                                 id="siege<%= siege.getId() %>"
                                                 <%= isTaken ? "disabled" : "" %>>
-                                            <label for="siege<%= siege.getId() %>"
-                                                class="siege-card card border h-100 mb-0 <%= isTaken ? "taken" : "" %>">
+                                            <label for="siege<%= siege.getId() %>" class="siege-card card border h-100 mb-0 position-relative <%= isTaken ? "taken" : "" %>">
                                                 <div class="card-body text-center">
                                                     <div class="mb-2">
                                                         <span class="h4"><%= siege.getId() %></span>
@@ -115,6 +119,20 @@
                                                     <div class="mt-2 text-primary fw-bold">
                                                         <%= String.format("%,.2f", siege.getPrix()) %> Ar
                                                     </div>
+                                                    <% if (!isTaken) { %>
+                                                        <div class="mt-3">
+                                                            <select class="age-select form-select form-select-sm" 
+                                                                    id="ageCategorie<%= i + 1 %>" 
+                                                                    name="ageCategorie<%= i + 1 %>">
+                                                                <% for (AgeCategorie categorie : ageCategories) { %>
+                                                                    <option value="<%= categorie.getId() %>" 
+                                                                            <%= categorie.getName().equals("Adulte") ? "selected" : "" %>>
+                                                                        <%= categorie.toString() %>
+                                                                    </option>
+                                                                <% } %>
+                                                            </select>
+                                                        </div>
+                                                    <% } %>
                                                 </div>
                                             </label>
                                         </div>
@@ -165,21 +183,34 @@
                             let total = 0;
                             let selectedSeats = [];
 
-                            seatCheckboxes.forEach(checkbox => {
-                                checkbox.removeAttribute('name'); // reset all
+                            // Retirer tous les noms des selects d'abord
+                            document.querySelectorAll('.age-select').forEach(select => {
+                                select.removeAttribute('name');
+                            });
+
+                            seatCheckboxes.forEach((checkbox, index) => {
+                                checkbox.removeAttribute('name');
                                 if (checkbox.checked) {
-                                    selectedSeats.push(checkbox);
+                                    selectedSeats.push({checkbox, index});
                                     const price = parseFloat(checkbox.getAttribute('data-price')) || 0;
                                     total += price;
                                 }
                             });
 
-                            // Réattribuer les noms selon l'ordre
-                            selectedSeats.forEach((cb, index) => {
-                                cb.setAttribute('name', 'siegeAvionId' + (index + 1));
+                            // Réattribuer les noms selon l'ordre des sièges sélectionnés
+                            selectedSeats.forEach((seat, index) => {
+                                const seatNumber = index + 1;
+                                // Attribution du nom pour le siège
+                                seat.checkbox.setAttribute('name', 'siegeAvionId' + seatNumber);
+                                
+                                // Récupération et attribution du nom pour la catégorie d'âge correspondante
+                                const originalSelect = document.getElementById('ageCategorie' + (seat.index + 1));
+                                if (originalSelect) {
+                                    originalSelect.setAttribute('name', 'ageCategorie' + seatNumber);
+                                }
                             });
 
-                            // Mettre à jour total + nSiege
+                            // Mise à jour du total et du nombre de sièges
                             totalAmount.textContent = total.toLocaleString('fr-FR', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2

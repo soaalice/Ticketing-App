@@ -7,9 +7,9 @@ public enum Status {
     // Vols
     FULL("Complet"),
     // Vols || Reservations
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    SUSPENDED("Suspendue"),
+    ACTIVE("Actif"),
+    INACTIVE("Inactif"),
+    // SUSPENDED("Suspendue"),
     CONFIRMED("Confirmée"),
     CANCELLED("Annulée"),
     PENDING("En attente");
