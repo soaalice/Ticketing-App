@@ -73,9 +73,8 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title mb-3">
-                                <i class="fas fa-plane-departure text-primary me-2"></i>
                                 <%= reservation.getVol().getVilleDepart().getName() %> 
-                                <i class="fas fa-arrow-right mx-2"></i> 
+                                -
                                 <%= reservation.getVol().getVilleArrivee().getName() %>
                             </h5>
                             

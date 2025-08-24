@@ -64,10 +64,6 @@
                                        class="btn btn-outline-primary">
                                         <i class="fas fa-edit me-2"></i>Éditer
                                     </a>
-                                    <a href="${pageContext.request.contextPath}/vols" 
-                                       class="btn btn-outline-dark border-start-0">
-                                        <i class="fas fa-arrow-left me-2"></i>Retour
-                                    </a>
                                 </div>
                             <% } %>
                         </div>
