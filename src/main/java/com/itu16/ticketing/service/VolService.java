@@ -76,6 +76,8 @@ public class VolService extends CRUDService<Vol, Long> {
             LocalDateTime dateTime = LocalDateTime.parse(vol.getDateDepart());
             dateTime = dateTime.minusHours(Long.parseLong(param.getValue()));
             vol.setDateButoireReservation(dateTime.toString());
+        } else {
+            vol.setDateButoireReservation(vol.getDateDepart());
         }
     }
 

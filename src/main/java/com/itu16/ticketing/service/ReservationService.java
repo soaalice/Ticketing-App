@@ -164,6 +164,8 @@ public class ReservationService extends CRUDService<Reservation, Long> {
             LocalDateTime dateTime = LocalDateTime.parse(reservation.getVol().getDateDepart());
             dateTime = dateTime.minusHours(Long.parseLong(param.getValue()));
             reservation.setDateButoireAnnulation(dateTime.toString());
+        } else {
+            reservation.setDateButoireAnnulation(reservation.getVol().getDateDepart());
         }
     }
 
