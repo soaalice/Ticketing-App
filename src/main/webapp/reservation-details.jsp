@@ -3,10 +3,13 @@
 <%@ page import="com.itu16.ticketing.model.ReservationDetails" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.itu16.ticketing.dto.Status" %>
+<%@ page import="java.time.LocalDateTime" %>
 
 <%
     Reservation reservation = (Reservation) request.getAttribute("reservation");
     reservation.setMontantApresAnnulation();
+
+    String errorMessage = (String) request.getAttribute("errorMessage");
 %>
 
 <!DOCTYPE html>
@@ -18,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body{
-            background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, -0.3)), url('../assets/img/beach.avif');
+            background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, -0.3)), url('${pageContext.request.contextPath}/assets/img/beach.avif');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -116,6 +119,14 @@
     <%@ include file="assets/inc/header.jsp" %>
 
     <div class="container py-5">
+        <% if(errorMessage !=null) { %>
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <%= errorMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card shadow-sm">
@@ -273,31 +284,67 @@
                                 <% } %>
                             </div>
                         </div>
+
+                        <!-- Date limite d'annulation -->
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-6">
+                                <div class="detail-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 px-4 me-3">
+                                            <i class="fas fa-hourglass-end text-warning"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-muted mb-1">Annulations possibles jusqu'au</h6>
+                                            <p class="mb-0 fw-bold"><%= reservation.getDateButoireAnnulation() %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-footer bg-white py-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="${pageContext.request.contextPath}/reservations" 
-                               class="btn btn-light">
+                            <a href="${pageContext.request.contextPath}/reservations" class="btn btn-light">
                                 <i class="fas fa-arrow-left me-2"></i>Retour
                             </a>
-                                <% if(isAdmin) { %>
-                            <div class="btn-group">
-                                <!-- <a href="#" class="btn btn-outline-primary">
-                                    <i class="fas fa-download me-2"></i>Télécharger la facture
-                                </a> -->
-                                    <button type="button" class="btn btn-outline-danger" 
-                                            onclick="if(confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
-                                                document.getElementById('cancelForm').submit();
-                                            }">
-                                        <i class="fas fa-times me-2"></i>Annuler la réservation
-                                    </button>
-                                    <form id="cancelForm" action="${pageContext.request.contextPath}/reservations/cancel" 
-                                          method="post" class="d-none">
-                                        <input type="hidden" name="id" value="<%= reservation.getId() %>">
-                                    </form>
-                            </div>
-                                <% } %>
+                            <% 
+                                LocalDateTime now = LocalDateTime.now();
+                                LocalDateTime dateButoireAnnulation = LocalDateTime.parse(reservation.getDateButoireAnnulation());
+                                boolean annulationsClosed = now.isAfter(dateButoireAnnulation);
+                                
+                                if(isAdmin || (!annulationsClosed && reservation.getStatus() != Status.CANCELLED)) { 
+                            %>
+                                <div class="btn-group">
+                                    <% if(isAdmin) { %>
+                                        <button type="button" class="btn btn-outline-danger" 
+                                                onclick="if(confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                                                    document.getElementById('cancelForm').submit();
+                                                }">
+                                            <i class="fas fa-times me-2"></i>Annuler la réservation
+                                        </button>
+                                        <form id="cancelForm" action="${pageContext.request.contextPath}/reservations/cancel" 
+                                              method="post" class="d-none">
+                                            <input type="hidden" name="id" value="<%= reservation.getId() %>">
+                                        </form>
+                                    <% } else if (!annulationsClosed) { %>
+                                        <button type="button" class="btn btn-outline-danger" 
+                                                onclick="if(confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                                                    document.getElementById('cancelForm').submit();
+                                                }">
+                                            <i class="fas fa-times me-2"></i>Annuler la réservation
+                                        </button>
+                                        <form id="cancelForm" action="${pageContext.request.contextPath}/reservations/cancel" 
+                                              method="post" class="d-none">
+                                            <input type="hidden" name="id" value="<%= reservation.getId() %>">
+                                        </form>
+                                    <% } %>
+                                </div>
+                            <% } else if (!isAdmin && annulationsClosed) { %>
+                                <div class="alert alert-warning mb-0 py-2">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Les annulations ne sont plus possibles pour cette réservation
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                 </div>

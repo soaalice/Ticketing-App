@@ -1,6 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.itu16.ticketing.model.Vol" %>
+<%@ page import="java.time.LocalDateTime" %>
+
+<%
+    String errorMessage = (String) request.getAttribute("errorMessage");
+%>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,6 +28,14 @@
             <% } %>
         </div>
 
+        <% if (errorMessage != null) { %>
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <%= errorMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+
         <div class="row g-4">
             <% 
                 List<Vol> vols = (List<Vol>) request.getAttribute("vols");
@@ -30,11 +44,29 @@
             %>
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                            <h6 class="mb-0">
+                                <i class="fas fa-plane text-primary me-2"></i>Vol N°<%= vol.getId() %>
+                            </h6>
+                            <%
+                                LocalDateTime now = LocalDateTime.now();
+                                LocalDateTime dateButoire = LocalDateTime.parse(vol.getDateButoireReservation());
+                                boolean reservationsClosed = now.isAfter(dateButoire);
+                                if (reservationsClosed) {
+                            %>
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-lock me-1"></i>Réservations fermées
+                                </span>
+                            <% } else { %>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Réservations ouvertes
+                                </span>
+                            <% } %>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title mb-3">
-                                <i class="fas fa-plane-departure text-primary me-2"></i>
                                 <%= vol.getVilleDepart().getName() %> 
-                                <i class="fas fa-arrow-right mx-2"></i> 
+                                - 
                                 <%= vol.getVilleArrivee().getName() %>
                             </h5>
                             <div class="card-text">
@@ -51,6 +83,10 @@
                                     <i class="fas fa-calendar-check me-2 text-secondary"></i>
                                     <strong>Arrivée :</strong> <%= vol.getDateArrivee() %>
                                 </p>
+                                <p class="mb-2">
+                                    <i class="fas fa-hourglass-end me-2 text-warning"></i>
+                                    <strong>Réservations jusqu'au:</strong> <%= vol.getDateButoireReservation() %>
+                                </p>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
@@ -61,14 +97,14 @@
                                         <i class="fas fa-info-circle me-1"></i>Détails
                                     </a>
                                 </div>
-                                    <% if (isLogged && !isAdmin) { %>
-                                        <div class="btn-group">
-                                            <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>" 
-                                            class="btn btn-success btn-sm ms-2">
-                                                <i class="fas fa-ticket me-1"></i>Réserver
-                                            </a>
-                                        </div>
-                                    <% } %>
+                                <% if (isLogged && !isAdmin && !reservationsClosed) { %>
+                                    <div class="btn-group">
+                                        <a href="${pageContext.request.contextPath}/reservations/create?volId=<%= vol.getId() %>" 
+                                           class="btn btn-success btn-sm ms-2">
+                                            <i class="fas fa-ticket me-1"></i>Réserver
+                                        </a>
+                                    </div>
+                                <% } %>
                                 <% if (isAdmin) { %>
                                     <div class="btn-group">
                                         <a href="${pageContext.request.contextPath}/vols/edit?id=<%= vol.getId() %>" 

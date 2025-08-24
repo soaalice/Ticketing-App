@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.itu16.ticketing.model.Reservation" %>
 <%@ page import="com.itu16.ticketing.dto.Status" %>
+<%@ page import="java.time.LocalDateTime" %>
 
 <%
     List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
@@ -20,11 +21,6 @@
         }
         .reservation-card:hover {
             transform: translateY(-5px);
-        }
-        .status-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
         }
     </style>
 </head>
@@ -50,15 +46,32 @@
             %>
                 <div class="col-md-6 col-lg-4">
                     <div class="card reservation-card h-100 shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                            <h6 class="mb-0">
+                                <i class="fas fa-ticket-alt text-primary me-2"></i>Réservation N°<%= reservation.getId() %>
+                            </h6>
+                            <% if(reservation.getStatus() != Status.CANCELLED) { 
+                                LocalDateTime now = LocalDateTime.now();
+                                LocalDateTime dateButoireAnnulation = LocalDateTime.parse(reservation.getDateButoireAnnulation());
+                                boolean annulationsClosed = now.isAfter(dateButoireAnnulation);
+                            %>
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>Confirmée
+                                    </span>
+                                    <% if(!isAdmin && annulationsClosed) { %>
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-lock me-1"></i>Non annulable
+                                        </span>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-ban me-1"></i>Annulée
+                                </span>
+                            <% } %>
+                        </div>
                         <div class="card-body">
-                            <div class="status-badge">
-                                <% if(reservation.getStatus() != Status.CANCELLED) { %>
-                                    <span class="badge bg-success">Confirmée</span>
-                                <% } else { %>
-                                    <span class="badge bg-danger">Annulée</span>
-                                <% } %>
-                            </div>
-
                             <h5 class="card-title mb-3">
                                 <i class="fas fa-plane-departure text-primary me-2"></i>
                                 <%= reservation.getVol().getVilleDepart().getName() %> 
@@ -81,6 +94,11 @@
                                         <strong>Client:</strong> <%= reservation.getUtilisateur().getFullName() %>
                                     </p>
                                 <% } %>
+                                <p class="mb-2">
+                                    <i class="fas fa-hourglass-end me-2 text-warning"></i>
+                                    <strong>Annulation possible jusqu'au:</strong> 
+                                    <%= reservation.getDateButoireAnnulation() %>
+                                </p>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                     <div>
                                         <i class="fas fa-receipt text-success me-2"></i>
@@ -100,10 +118,14 @@
                                     <i class="fas fa-info-circle me-1"></i>Détails
                                 </a>
                                 <div class="btn-group">
-                                    <!-- <a href="#" class="btn btn-outline-success btn-sm">
-                                        <i class="fas fa-download me-1"></i>Facture
-                                    </a> -->
-                                    <% if (reservation.getStatus() != Status.CANCELLED) { %>
+                                    <% 
+                                    if (reservation.getStatus() != Status.CANCELLED) {
+                                        LocalDateTime now = LocalDateTime.now();
+                                        LocalDateTime dateButoireAnnulation = LocalDateTime.parse(reservation.getDateButoireAnnulation());
+                                        boolean annulationsClosed = now.isAfter(dateButoireAnnulation);
+                                        
+                                        if(isAdmin || !annulationsClosed) { 
+                                    %>
                                         <form action="${pageContext.request.contextPath}/reservations/cancel" 
                                               method="post" class="d-inline ms-2">
                                             <input type="hidden" name="id" value="<%= reservation.getId() %>">
@@ -112,7 +134,10 @@
                                                 <i class="fas fa-times me-1"></i>Annuler
                                             </button>
                                         </form>
-                                    <% } %>
+                                    <% 
+                                        }
+                                    } 
+                                    %>
                                 </div>
                             </div>
                         </div>

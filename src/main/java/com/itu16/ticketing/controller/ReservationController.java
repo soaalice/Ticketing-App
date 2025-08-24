@@ -1,5 +1,6 @@
 package com.itu16.ticketing.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,17 @@ public class ReservationController {
     public ModelView afficherFormulaireCreationReservation(@Param(name="volId") String volId) {
         Vol vol = volService.findById(Long.parseLong(volId));
         ModelView modelView = new ModelView();
+
+        try {
+            volService.checkDateButoireReservation(vol);
+        } catch (Exception e) {
+            modelView.addObject("errorMessage", e.getMessage());
+            modelView.setUrl("/vols.jsp");
+            List<Vol> vols =  volService.findByCriteria(null, null, null);
+            modelView.addObject("vols", vols);
+            return modelView;
+        }
+
         modelView.setUrl("/reservation-create.jsp");
         modelView.addObject("vol", vol);
         List<SiegeAvion> sieges = vol.getAvion().getSieges();
@@ -113,6 +125,17 @@ public class ReservationController {
         ModelView modelView = new ModelView();
         modelView.setUrl("/reservation-details.jsp");
         Vol vol = volService.findById(Long.parseLong(request.get("volId")));
+
+        try {
+            volService.checkDateButoireReservation(vol);
+        } catch (Exception e) {
+            modelView.addObject("errorMessage", e.getMessage());
+            modelView.setUrl("/vols.jsp");
+            List<Vol> vols =  volService.findByCriteria(null, null, null);
+            modelView.addObject("vols", vols);
+            return modelView;
+        }
+
         Reservation reservation = reservationService.generateReservation(vol, utilisateur, request);
         modelView.addObject("reservation", reservation);
         return modelView;
@@ -122,8 +145,19 @@ public class ReservationController {
     @Url("reservations/cancel")
     @Authentified(roles={"user", "admin"})
     public ModelView annulerReservation(@Param(name = "id") String id, CustomSession session) {
+        ModelView modelView = new ModelView();
         Long idReservation = Long.parseLong(id);
         Reservation reservation = reservationService.findById(idReservation);
+
+        try {
+            reservationService.checkDateButoireAnnulation(reservation);
+        } catch (Exception e) {
+            modelView.setUrl("/reservation-details.jsp");
+            modelView.addObject("reservation", reservation);
+            modelView.addObject("errorMessage", e.getMessage());
+            return modelView;
+        }
+
         String description = "Annulation de la réservation pour le vol " + reservation.getVol().getId();
         if (session.get("role").equals("admin")) {
             description += " par un administrateur";
@@ -133,7 +167,6 @@ public class ReservationController {
         if (reservation != null) {
             annulationReservationService.cancelReservation(reservation, description);
         }
-        ModelView modelView = new ModelView();
         List<Reservation> reservations = reservationService.findAll();
         modelView.addObject("reservations", reservations);
         modelView.setUrl("/reservations.jsp");
@@ -144,12 +177,22 @@ public class ReservationController {
     @Url("reservations/details/cancel")
     @Authentified(roles={"user"})
     public ModelView annulerReservationDetails(@Param(name="id") String id){
+        ModelView modelView = new ModelView();
         Long idReservationDetails = Long.parseLong(id);
         ReservationDetails details = reservationDetailsService.findById(idReservationDetails);
+
+        try {
+            reservationService.checkDateButoireAnnulation(details.getReservation());
+        } catch (Exception e) {
+            modelView.setUrl("/reservation-details.jsp");
+            modelView.addObject("reservation", details.getReservation());
+            modelView.addObject("errorMessage", e.getMessage());
+            return modelView;
+        }
+
         if (details != null) {
             annulationReservationDetailsService.cancelReservationDetails(details);
         }
-        ModelView modelView = new ModelView();
         modelView.setUrl("/reservation-details.jsp");
         modelView.addObject("reservation", details.getReservation());
         return modelView;

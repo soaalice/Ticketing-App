@@ -60,7 +60,7 @@ public class ReservationService extends CRUDService<Reservation, Long> {
     }
 
     @Transactional
-    public Reservation generateReservation(Vol vol, Utilisateur utilisateur, Map<String, String> request) {
+    public Reservation generateReservation(Vol vol, Utilisateur utilisateur, Map<String, String> request){
         System.out.println("............................Génération de la réservation..................................");
 
         System.err.println("REQUEST MAP: " + request);
@@ -145,6 +145,7 @@ public class ReservationService extends CRUDService<Reservation, Long> {
         reservation.setMontantTotal(montantTotal);
         reservation.setMontantPromu(montantPromu);
         reservation.setUtilisateur(utilisateur);
+
         reservationService.create(reservation);
         createDetails(reservation, reservationDetailsList);
         return reservation;
@@ -166,6 +167,14 @@ public class ReservationService extends CRUDService<Reservation, Long> {
             reservation.setDateButoireAnnulation(dateTime.toString());
         } else {
             reservation.setDateButoireAnnulation(reservation.getVol().getDateDepart());
+        }
+    }
+
+    public void checkDateButoireAnnulation(Reservation reservation) throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dateButoire = LocalDateTime.parse(reservation.getDateButoireAnnulation());
+        if (now.isAfter(dateButoire)) {
+            throw new Exception("La date butoire d'annulation de la réservation #" + reservation.getId() + " est dépassée.");
         }
     }
 

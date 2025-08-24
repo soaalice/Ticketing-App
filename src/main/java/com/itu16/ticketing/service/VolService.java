@@ -81,6 +81,14 @@ public class VolService extends CRUDService<Vol, Long> {
         }
     }
 
+    public void checkDateButoireReservation(Vol vol) throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dateButoire = LocalDateTime.parse(vol.getDateButoireReservation());
+        if (now.isAfter(dateButoire)) {
+            throw new Exception("Les réservations pour le vol #" + vol.getId() + " sont closes.");
+        }
+    }
+
     @Override
     public void create(Vol entity) {
         setDateButoireReservation(entity);
